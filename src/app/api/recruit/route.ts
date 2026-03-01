@@ -24,7 +24,6 @@ export async function POST(request: Request) {
       facility: body.facility || null,
       message: body.message || null,
       agreed_to_privacy_policy: body.agreedToPrivacyPolicy,
-      submitted_at: new Date().toISOString(),
     }])
 
     if (error) {
