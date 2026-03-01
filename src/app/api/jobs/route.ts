@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 
+// 毎リクエスト動的に実行（キャッシュしない）
+export const dynamic = 'force-dynamic'
+
 // Public endpoint: active job listings only
 // Used by frontend and future Google Apps Script integration
 export async function GET() {
