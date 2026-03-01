@@ -1,19 +1,16 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createServerSupabaseClient, hasValidSupabaseConfig } from '@/lib/supabase-server'
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-    if (!supabaseUrl || !supabaseServiceKey || supabaseUrl === 'your_supabase_url') {
+    if (!hasValidSupabaseConfig()) {
       console.log('Recruit form submission (Supabase not configured):', body)
       return NextResponse.json({ success: true })
     }
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    const supabase = createServerSupabaseClient()
 
     const { error } = await supabase.from('recruit_submissions').insert([{
       last_name: body.lastName,

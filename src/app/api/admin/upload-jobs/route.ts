@@ -1,15 +1,6 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import Papa from 'papaparse'
-
-function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) {
-    throw new Error('NEXT_PUBLIC_SUPABASE_URL または SUPABASE_SERVICE_ROLE_KEY が未設定です')
-  }
-  return createClient(url, key)
-}
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 // CSVの¥付き数値を整数に変換
 function parseSalary(val: string): number | null {
@@ -94,7 +85,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: '有効な求人データがありません' }, { status: 400 })
     }
 
-    const supabase = getSupabase()
+    const supabase = createServerSupabaseClient()
 
     // このCSVに含まれるキーを収集
     const uploadedKeys = validRecords.map(r => `${r.facility}__${r.job_type}__${r.employment_type}`)
@@ -136,6 +127,7 @@ export async function POST(request: Request) {
     })
   } catch (err) {
     console.error('Upload error:', err)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    const message = err instanceof Error ? err.message : 'Server error'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

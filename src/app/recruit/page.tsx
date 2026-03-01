@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import { createClient } from '@supabase/supabase-js'
+import { createServerSupabaseClient, hasValidSupabaseConfig } from '@/lib/supabase-server'
 import type { JobListing } from '@/types'
 
 export const metadata = {
@@ -12,28 +12,27 @@ export const metadata = {
 export const revalidate = 60 // ISR: 60秒ごとに再検証
 
 async function getJobs(): Promise<JobListing[]> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!hasValidSupabaseConfig()) return []
 
-  if (!supabaseUrl || !supabaseKey || supabaseUrl === 'your_supabase_url') {
+  try {
+    const supabase = createServerSupabaseClient()
+    const { data, error } = await supabase
+      .from('job_listings')
+      .select('*')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .order('facility', { ascending: true })
+      .order('job_type', { ascending: true })
+
+    if (error) {
+      console.error('Failed to fetch jobs:', error)
+      return []
+    }
+    return data || []
+  } catch (err) {
+    console.error('Failed to fetch jobs:', err)
     return []
   }
-
-  const supabase = createClient(supabaseUrl, supabaseKey)
-  const { data, error } = await supabase
-    .from('job_listings')
-    .select('*')
-    .eq('is_active', true)
-    .order('sort_order', { ascending: true })
-    .order('facility', { ascending: true })
-    .order('job_type', { ascending: true })
-
-  if (error) {
-    console.error('Failed to fetch jobs:', error)
-    return []
-  }
-
-  return data || []
 }
 
 function formatSalary(min: number | null, max: number | null): string {

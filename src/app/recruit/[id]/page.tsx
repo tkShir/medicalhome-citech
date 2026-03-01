@@ -1,35 +1,29 @@
 import { notFound } from 'next/navigation'
-import { createClient } from '@supabase/supabase-js'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import RecruitForm from '@/components/forms/RecruitForm'
+import { createServerSupabaseClient, hasValidSupabaseConfig } from '@/lib/supabase-server'
 import type { JobListing } from '@/types'
 
 export const revalidate = 60
 
-function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY!
-  return createClient(url, key)
-}
-
 async function getJob(id: string): Promise<JobListing | null> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!supabaseUrl || !supabaseKey || supabaseUrl === 'your_supabase_url') {
+  if (!hasValidSupabaseConfig()) return null
+
+  try {
+    const supabase = createServerSupabaseClient()
+    const { data, error } = await supabase
+      .from('job_listings')
+      .select('*')
+      .eq('id', id)
+      .eq('is_active', true)
+      .single()
+
+    if (error || !data) return null
+    return data
+  } catch {
     return null
   }
-
-  const supabase = getSupabase()
-  const { data, error } = await supabase
-    .from('job_listings')
-    .select('*')
-    .eq('id', id)
-    .eq('is_active', true)
-    .single()
-
-  if (error || !data) return null
-  return data
 }
 
 export async function generateMetadata({ params }: { params: { id: string } }) {

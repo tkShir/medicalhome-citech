@@ -1,17 +1,11 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY!
-  return createClient(url, key)
-}
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 // Public endpoint: active job listings only
 // Used by frontend and future Google Apps Script integration
 export async function GET() {
   try {
-    const supabase = getSupabase()
+    const supabase = createServerSupabaseClient()
 
     const { data, error } = await supabase
       .from('job_listings')
@@ -28,7 +22,7 @@ export async function GET() {
 
     return NextResponse.json({ jobs: data })
   } catch (err) {
-    console.error('Jobs API error:', err)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    const message = err instanceof Error ? err.message : 'Server error'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

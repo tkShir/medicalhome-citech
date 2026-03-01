@@ -1,12 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) throw new Error('Supabase env vars missing')
-  return createClient(url, key)
-}
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 export async function PATCH(
   request: Request,
@@ -14,7 +7,7 @@ export async function PATCH(
 ) {
   try {
     const body = await request.json()
-    const supabase = getSupabase()
+    const supabase = createServerSupabaseClient()
 
     const { data, error } = await supabase
       .from('job_listings')
@@ -29,7 +22,8 @@ export async function PATCH(
     }
 
     return NextResponse.json(data)
-  } catch {
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Server error'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
