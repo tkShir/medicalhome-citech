@@ -22,6 +22,8 @@ export async function POST(request: Request) {
       phone: body.phone,
       job_type: body.jobType,
       facility: body.facility || null,
+      job_listing_id: body.jobListingId || null,
+      job_title: body.jobTitle || null,
       message: body.message || null,
       agreed_to_privacy_policy: body.agreedToPrivacyPolicy,
     }])

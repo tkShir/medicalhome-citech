@@ -2,7 +2,34 @@
 
 import { useState } from 'react'
 
-export default function RecruitForm() {
+interface RecruitFormProps {
+  jobListingId?: string
+  jobTitle?: string
+  facilityDefault?: string
+  jobTypeDefault?: string
+}
+
+const FACILITY_OPTIONS = [
+  { value: 'ナーシングホームAbee保土ヶ谷', label: 'ナーシングホームAbee保土ヶ谷' },
+  { value: 'シーズメディカルホーム藤沢本町', label: 'シーズメディカルホーム藤沢本町' },
+  { value: 'シーズメディカルホーム川崎白鳥', label: 'シーズメディカルホーム川崎白鳥' },
+]
+
+const JOB_TYPE_OPTIONS = [
+  { value: '看護師', label: '看護師' },
+  { value: '介護職員', label: '介護職員' },
+  { value: 'PT/OT職員', label: 'PT/OT職員' },
+  { value: '相談員', label: '相談員' },
+  { value: '事務スタッフ', label: '事務スタッフ' },
+  { value: 'その他', label: 'その他' },
+]
+
+export default function RecruitForm({
+  jobListingId,
+  jobTitle,
+  facilityDefault,
+  jobTypeDefault,
+}: RecruitFormProps) {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
@@ -22,6 +49,8 @@ export default function RecruitForm() {
       facility: formData.get('facility') as string,
       message: formData.get('message') as string,
       agreedToPrivacyPolicy: formData.get('agreedToPrivacyPolicy') === 'on',
+      jobListingId: jobListingId || undefined,
+      jobTitle: jobTitle || undefined,
     }
 
     try {
@@ -57,6 +86,10 @@ export default function RecruitForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Hidden fields */}
+      {jobListingId && <input type="hidden" name="jobListingId" value={jobListingId} />}
+      {jobTitle && <input type="hidden" name="jobTitle" value={jobTitle} />}
+
       {/* Name row */}
       <div className="grid grid-cols-2 gap-4">
         <div>
@@ -91,24 +124,21 @@ export default function RecruitForm() {
         <label className="form-label">
           希望職種 <span className="text-pink-main">*</span>
         </label>
-        <select name="jobType" required className="form-select">
+        <select name="jobType" required className="form-select" defaultValue={jobTypeDefault || ''}>
           <option value="">選択してください</option>
-          <option value="nurse">看護師</option>
-          <option value="care">介護職員</option>
-          <option value="rehab">PT/OT職員</option>
-          <option value="counselor">相談員</option>
-          <option value="office">事務スタッフ</option>
-          <option value="other">その他</option>
+          {JOB_TYPE_OPTIONS.map(opt => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
         </select>
       </div>
 
       <div>
         <label className="form-label">希望施設</label>
-        <select name="facility" className="form-select">
+        <select name="facility" className="form-select" defaultValue={facilityDefault || ''}>
           <option value="">選択してください（未定の場合は空白）</option>
-          <option value="abee-hodogaya">ナーシングホームAbee保土ヶ谷</option>
-          <option value="ciz-fujisawahonmachi">シーズメディカルホーム藤沢本町</option>
-          <option value="ciz-kawasakishiratori">シーズメディカルホーム川崎白鳥</option>
+          {FACILITY_OPTIONS.map(opt => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
         </select>
       </div>
 
