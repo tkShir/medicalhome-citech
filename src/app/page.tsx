@@ -1,6 +1,14 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+
+export const metadata: Metadata = {
+  title: {
+    absolute: '【公式】シーズメディカルホーム｜関東のホスピス型住宅',
+  },
+  description: '関東エリアに展開するホスピス型住宅のシーズメディカルホーム。24時間看護体制・訪問診療連携により、終末期・医療依存度の高い方が安心して暮らせる住まいを提供します。横浜・藤沢・川崎エリア。',
+}
 
 export default function HomePage() {
   return (

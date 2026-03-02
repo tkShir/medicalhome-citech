@@ -30,7 +30,7 @@ const facilities = [
 
 export const metadata = {
   title: '施設一覧',
-  description: 'シーズメディカルホームの施設一覧。神奈川県内に複数のホスピス住宅を展開しています。',
+  description: 'シーズメディカルホームの施設一覧。横浜（保土ヶ谷）・藤沢・川崎エリアにホスピス型住宅を展開。24時間看護体制と訪問診療連携で、終末期・医療依存度の高い方の入居をサポートします。',
 }
 
 export default function FacilitiesPage() {

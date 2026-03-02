@@ -84,14 +84,25 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Mobile: phone + hamburger */}
-          <div className="flex items-center gap-3 md:hidden">
+          {/* Mobile: recruit link + phone + hamburger */}
+          <div className="flex items-center gap-2 md:hidden">
+            <Link
+              href="/saiyo"
+              className={`font-sans text-[10px] font-medium tracking-wider px-2 py-1.5 border transition-colors ${
+                pathname === '/saiyo' || pathname === '/recruit'
+                  ? 'text-green-dark border-green-dark bg-green-light'
+                  : 'text-midgray border-lightgray hover:text-green-dark hover:border-green-dark'
+              }`}
+              aria-label="採用情報"
+            >
+              採用情報
+            </Link>
             <a
               href="tel:03-3797-4002"
-              className="font-sans text-xs font-medium text-green-dark border border-green-dark px-3 py-1.5 tracking-wider"
-              aria-label="電話する"
+              className="font-sans text-sm font-semibold text-white bg-green-dark px-4 py-2 tracking-wider hover:bg-green-deeper transition-colors"
+              aria-label="電話相談"
             >
-              ☎ 電話相談
+              ☎ 電話
             </a>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

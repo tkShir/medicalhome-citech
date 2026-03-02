@@ -11,11 +11,20 @@ interface ContactSubmission {
   company: string | null
   message: string
   agreed_to_privacy_policy: boolean
-  created_at: string
+  // テーブルによって列名が異なる場合があるため両方定義
+  created_at?: string
+  submitted_at?: string
+}
+
+function getTimestamp(s: ContactSubmission): string {
+  return s.created_at ?? s.submitted_at ?? ''
 }
 
 function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleString('ja-JP', {
+  if (!dateStr) return '—'
+  const d = new Date(dateStr)
+  if (isNaN(d.getTime())) return '—'
+  return d.toLocaleString('ja-JP', {
     year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit',
   })
@@ -34,18 +43,25 @@ function DetailRow({ label, value }: { label: string; value: string | null | und
 export default function ContactSection() {
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([])
   const [loading, setLoading] = useState(true)
+  const [apiError, setApiError] = useState<string | null>(null)
   const [selected, setSelected] = useState<ContactSubmission | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
+    setApiError(null)
     try {
       const res = await fetch('/api/admin/submissions/contact')
       const data = await res.json()
+      if (!res.ok) {
+        setApiError(data.detail || data.error || 'データの取得に失敗しました')
+        setSubmissions([])
+        return
+      }
       setSubmissions(data.submissions || [])
-    } catch {
-      console.error('Failed to load contact submissions')
+    } catch (err) {
+      setApiError(err instanceof Error ? err.message : 'エラーが発生しました')
     } finally {
       setLoading(false)
     }
@@ -97,6 +113,21 @@ export default function ContactSection() {
         <div className="py-16 text-center bg-white border border-lightgray">
           <p className="font-sans text-sm text-midgray">読み込み中...</p>
         </div>
+      ) : apiError ? (
+        <div className="bg-white border border-lightgray p-6">
+          <div className="flex items-start gap-3 text-pink-main">
+            <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M5.07 19H19a2 2 0 001.75-2.99L13.75 4a2 2 0 00-3.5 0L3.25 16A2 2 0 005.07 19z" />
+            </svg>
+            <div>
+              <p className="font-sans text-sm font-medium text-darkgray">データの取得に失敗しました</p>
+              <p className="font-sans text-xs text-midgray mt-1 font-mono break-all">{apiError}</p>
+              <button onClick={load} className="font-sans text-xs text-green-dark hover:underline mt-3">
+                再試行する
+              </button>
+            </div>
+          </div>
+        </div>
       ) : submissions.length === 0 ? (
         <div className="py-16 text-center border border-dashed border-lightgray bg-white">
           <p className="font-sans text-sm text-midgray">お問い合わせはまだありません</p>
@@ -120,7 +151,7 @@ export default function ContactSection() {
                   onClick={() => { setSelected(s); setConfirmDelete(false) }}
                   className="border-b border-lightgray/50 hover:bg-green-light/20 cursor-pointer transition-colors"
                 >
-                  <td className="py-3 px-4 text-darkgray whitespace-nowrap">{formatDate(s.created_at)}</td>
+                  <td className="py-3 px-4 text-darkgray whitespace-nowrap">{formatDate(getTimestamp(s))}</td>
                   <td className="py-3 px-4 text-darkgray whitespace-nowrap">{s.last_name} {s.first_name}</td>
                   <td className="py-3 px-4 text-darkgray">{s.email}</td>
                   <td className="py-3 px-4 text-darkgray/70 hidden md:table-cell">
@@ -150,7 +181,7 @@ export default function ContactSection() {
             <div className="flex items-center justify-between px-6 py-4 border-b border-lightgray flex-shrink-0">
               <div>
                 <h3 className="font-serif text-base text-green-deeper">お問い合わせ詳細</h3>
-                <p className="font-sans text-xs text-midgray mt-0.5">{formatDate(selected.created_at)}</p>
+                <p className="font-sans text-xs text-midgray mt-0.5">{formatDate(getTimestamp(selected))}</p>
               </div>
               <button
                 onClick={() => { setSelected(null); setConfirmDelete(false) }}

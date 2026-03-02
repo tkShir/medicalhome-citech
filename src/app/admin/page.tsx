@@ -4,8 +4,9 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import ContactSection from './_components/ContactSection'
 import RecruitSection from './_components/RecruitSection'
+import SettingsSection from './_components/SettingsSection'
 
-type Tab = 'jobs' | 'contact' | 'recruit'
+type Tab = 'jobs' | 'contact' | 'recruit' | 'settings'
 
 interface Job {
   id: string
@@ -105,6 +106,7 @@ export default function AdminPage() {
     { id: 'jobs', label: '求人管理' },
     { id: 'contact', label: 'お問い合わせ' },
     { id: 'recruit', label: '採用応募' },
+    { id: 'settings', label: '設定' },
   ]
 
   return (
@@ -271,6 +273,7 @@ export default function AdminPage() {
 
       {activeTab === 'contact' && <ContactSection />}
       {activeTab === 'recruit' && <RecruitSection />}
+      {activeTab === 'settings' && <SettingsSection />}
     </div>
   )
 }

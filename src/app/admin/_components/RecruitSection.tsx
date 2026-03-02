@@ -14,11 +14,19 @@ interface RecruitSubmission {
   job_title: string | null
   message: string | null
   agreed_to_privacy_policy: boolean
-  created_at: string
+  created_at?: string
+  submitted_at?: string
+}
+
+function getTimestamp(s: RecruitSubmission): string {
+  return s.created_at ?? s.submitted_at ?? ''
 }
 
 function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleString('ja-JP', {
+  if (!dateStr) return '—'
+  const d = new Date(dateStr)
+  if (isNaN(d.getTime())) return '—'
+  return d.toLocaleString('ja-JP', {
     year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit',
   })
@@ -37,18 +45,25 @@ function DetailRow({ label, value }: { label: string; value: string | null | und
 export default function RecruitSection() {
   const [submissions, setSubmissions] = useState<RecruitSubmission[]>([])
   const [loading, setLoading] = useState(true)
+  const [apiError, setApiError] = useState<string | null>(null)
   const [selected, setSelected] = useState<RecruitSubmission | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
+    setApiError(null)
     try {
       const res = await fetch('/api/admin/submissions/recruit')
       const data = await res.json()
+      if (!res.ok) {
+        setApiError(data.detail || data.error || 'データの取得に失敗しました')
+        setSubmissions([])
+        return
+      }
       setSubmissions(data.submissions || [])
-    } catch {
-      console.error('Failed to load recruit submissions')
+    } catch (err) {
+      setApiError(err instanceof Error ? err.message : 'エラーが発生しました')
     } finally {
       setLoading(false)
     }
@@ -56,7 +71,6 @@ export default function RecruitSection() {
 
   useEffect(() => { load() }, [load])
 
-  // Escape key to close modal
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { setSelected(null); setConfirmDelete(false) }
@@ -90,15 +104,26 @@ export default function RecruitSection() {
         </div>
         <div className="flex items-center gap-3">
           <span className="font-sans text-xs text-midgray">{submissions.length}件</span>
-          <button onClick={load} className="font-sans text-xs text-green-dark hover:underline">
-            更新
-          </button>
+          <button onClick={load} className="font-sans text-xs text-green-dark hover:underline">更新</button>
         </div>
       </div>
 
       {loading ? (
         <div className="py-16 text-center bg-white border border-lightgray">
           <p className="font-sans text-sm text-midgray">読み込み中...</p>
+        </div>
+      ) : apiError ? (
+        <div className="bg-white border border-lightgray p-6">
+          <div className="flex items-start gap-3">
+            <svg className="w-5 h-5 flex-shrink-0 mt-0.5 text-pink-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M5.07 19H19a2 2 0 001.75-2.99L13.75 4a2 2 0 00-3.5 0L3.25 16A2 2 0 005.07 19z" />
+            </svg>
+            <div>
+              <p className="font-sans text-sm font-medium text-darkgray">データの取得に失敗しました</p>
+              <p className="font-sans text-xs text-midgray mt-1 font-mono break-all">{apiError}</p>
+              <button onClick={load} className="font-sans text-xs text-green-dark hover:underline mt-3">再試行する</button>
+            </div>
+          </div>
         </div>
       ) : submissions.length === 0 ? (
         <div className="py-16 text-center border border-dashed border-lightgray bg-white">
@@ -118,18 +143,13 @@ export default function RecruitSection() {
             </thead>
             <tbody>
               {submissions.map((s) => (
-                <tr
-                  key={s.id}
-                  onClick={() => { setSelected(s); setConfirmDelete(false) }}
-                  className="border-b border-lightgray/50 hover:bg-green-light/20 cursor-pointer transition-colors"
-                >
-                  <td className="py-3 px-4 text-darkgray whitespace-nowrap">{formatDate(s.created_at)}</td>
+                <tr key={s.id} onClick={() => { setSelected(s); setConfirmDelete(false) }}
+                  className="border-b border-lightgray/50 hover:bg-green-light/20 cursor-pointer transition-colors">
+                  <td className="py-3 px-4 text-darkgray whitespace-nowrap">{formatDate(getTimestamp(s))}</td>
                   <td className="py-3 px-4 text-darkgray whitespace-nowrap">{s.last_name} {s.first_name}</td>
                   <td className="py-3 px-4 text-darkgray hidden sm:table-cell">{s.job_type}</td>
                   <td className="py-3 px-4 text-darkgray/70 hidden md:table-cell">{s.facility || '—'}</td>
-                  <td className="py-3 px-4 text-darkgray/60 max-w-xs truncate hidden lg:table-cell">
-                    {s.job_title || '—'}
-                  </td>
+                  <td className="py-3 px-4 text-darkgray/60 max-w-xs truncate hidden lg:table-cell">{s.job_title || '—'}</td>
                 </tr>
               ))}
             </tbody>
@@ -137,44 +157,28 @@ export default function RecruitSection() {
         </div>
       )}
 
-      {/* Detail Modal */}
       {selected && (
-        <div
-          className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
-          onClick={() => { setSelected(null); setConfirmDelete(false) }}
-        >
-          <div
-            className="bg-white w-full max-w-lg max-h-[90vh] flex flex-col shadow-xl"
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Modal header */}
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
+          onClick={() => { setSelected(null); setConfirmDelete(false) }}>
+          <div className="bg-white w-full max-w-lg max-h-[90vh] flex flex-col shadow-xl"
+            onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-6 py-4 border-b border-lightgray flex-shrink-0">
               <div>
                 <h3 className="font-serif text-base text-green-deeper">採用応募詳細</h3>
-                <p className="font-sans text-xs text-midgray mt-0.5">{formatDate(selected.created_at)}</p>
+                <p className="font-sans text-xs text-midgray mt-0.5">{formatDate(getTimestamp(selected))}</p>
               </div>
-              <button
-                onClick={() => { setSelected(null); setConfirmDelete(false) }}
-                className="text-midgray hover:text-darkgray transition-colors p-1"
-                aria-label="閉じる"
-              >
+              <button onClick={() => { setSelected(null); setConfirmDelete(false) }}
+                className="text-midgray hover:text-darkgray transition-colors p-1" aria-label="閉じる">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-
-            {/* Modal body */}
             <div className="px-6 py-4 overflow-y-auto flex-1">
               <DetailRow label="氏名" value={`${selected.last_name} ${selected.first_name}`} />
               <div className="flex gap-4 py-2.5 border-b border-lightgray/50">
                 <span className="font-sans text-xs text-midgray w-28 flex-shrink-0">メール</span>
-                <a
-                  href={`mailto:${selected.email}`}
-                  className="font-sans text-xs text-green-dark hover:underline break-all"
-                >
-                  {selected.email}
-                </a>
+                <a href={`mailto:${selected.email}`} className="font-sans text-xs text-green-dark hover:underline break-all">{selected.email}</a>
               </div>
               <DetailRow label="電話番号" value={selected.phone} />
               <DetailRow label="希望職種" value={selected.job_type} />
@@ -188,41 +192,26 @@ export default function RecruitSection() {
               {selected.message && (
                 <div className="py-3">
                   <p className="font-sans text-xs text-midgray mb-2">メッセージ・ご質問</p>
-                  <p className="font-sans text-sm text-darkgray leading-relaxed whitespace-pre-wrap bg-offwhite p-4 border border-lightgray/50">
-                    {selected.message}
-                  </p>
+                  <p className="font-sans text-sm text-darkgray leading-relaxed whitespace-pre-wrap bg-offwhite p-4 border border-lightgray/50">{selected.message}</p>
                 </div>
               )}
             </div>
-
-            {/* Modal footer – delete */}
             <div className="px-6 pb-6 flex-shrink-0 border-t border-lightgray pt-4">
               {!confirmDelete ? (
-                <button
-                  onClick={() => setConfirmDelete(true)}
-                  className="font-sans text-xs text-pink-main border border-pink-main/50 px-4 py-2 hover:bg-pink-light transition-colors"
-                >
+                <button onClick={() => setConfirmDelete(true)}
+                  className="font-sans text-xs text-pink-main border border-pink-main/50 px-4 py-2 hover:bg-pink-light transition-colors">
                   このデータを削除する
                 </button>
               ) : (
                 <div className="bg-pink-light border border-pink-main/30 p-4">
-                  <p className="font-sans text-xs text-darkgray mb-3">
-                    本当に削除しますか？この操作は元に戻せません。
-                  </p>
+                  <p className="font-sans text-xs text-darkgray mb-3">本当に削除しますか？この操作は元に戻せません。</p>
                   <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => handleDelete(selected.id)}
-                      disabled={deleting}
-                      className="font-sans text-xs bg-pink-main text-white px-4 py-2 hover:bg-pink-dark transition-colors disabled:opacity-50"
-                    >
+                    <button onClick={() => handleDelete(selected.id)} disabled={deleting}
+                      className="font-sans text-xs bg-pink-main text-white px-4 py-2 hover:bg-pink-dark transition-colors disabled:opacity-50">
                       {deleting ? '削除中...' : '削除する'}
                     </button>
-                    <button
-                      onClick={() => setConfirmDelete(false)}
-                      className="font-sans text-xs text-midgray hover:text-darkgray transition-colors"
-                    >
-                      キャンセル
-                    </button>
+                    <button onClick={() => setConfirmDelete(false)}
+                      className="font-sans text-xs text-midgray hover:text-darkgray transition-colors">キャンセル</button>
                   </div>
                 </div>
               )}

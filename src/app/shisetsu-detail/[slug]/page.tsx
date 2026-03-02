@@ -15,6 +15,15 @@ const facilitiesData: Record<string, {
   minnanoKaigoUrl?: string
   jobMedleyUrl?: string
   lastUpdated?: string
+  features?: { icon: string; title: string; desc: string }[]
+  director?: { name: string; title: string; message: string }
+  access?: {
+    nearestStation: string
+    walkTime?: string
+    bus?: string
+    parking?: string
+    note?: string
+  }
 }> = {
   'abee-hodogaya': {
     name: 'ナーシングホームAbee保土ヶ谷',
@@ -26,6 +35,50 @@ const facilitiesData: Record<string, {
     recruitUrl: '/recruit?shisetsu=hodogaya',
     jobMedleyUrl: 'https://job-medley.com/facility/544393/',
     lastUpdated: '2026年1月19日',
+    features: [
+      {
+        icon: '🏥',
+        title: '24時間看護体制',
+        desc: '夜間を含む24時間、常駐の看護師が対応します。急変時も迅速にケアを提供できる体制を整えています。',
+      },
+      {
+        icon: '👨‍⚕️',
+        title: '訪問診療との連携',
+        desc: '定期的に訪問診療医が来訪し、医師との綿密な連携のもと医療処置・投薬管理を行います。',
+      },
+      {
+        icon: '🤝',
+        title: '訪問看護・介護ステーション併設',
+        desc: '同一建物内に訪問看護ステーションと訪問介護ステーションを併設。シームレスなケア提供が可能です。',
+      },
+      {
+        icon: '💚',
+        title: '看取り・ターミナルケア',
+        desc: '人生の最終章を穏やかに迎えられるよう、本人・ご家族のご意思を尊重した看取りケアを提供します。',
+      },
+      {
+        icon: '🍽️',
+        title: '食事・生活支援',
+        desc: 'その方の嗜好や食形態に合わせた食事提供のほか、入浴・排せつ介助など日常生活全般を支援します。',
+      },
+      {
+        icon: '🏃',
+        title: 'リハビリテーション',
+        desc: 'PT/OTによるリハビリを提供し、日常生活動作の維持・向上をサポートします。',
+      },
+    ],
+    director: {
+      name: '※ 施設長名をご記入ください',
+      title: '施設長',
+      message: 'ナーシングホームAbee保土ヶ谷では、「その人らしく」最期まで暮らし続けることのできる環境をつくることを使命と考えています。\n\n医療と介護の専門職が連携し、入居者様お一人おひとりのペースを大切にしながら、日々のケアに臨んでいます。ご本人やご家族の想いに寄り添い、安心してお任せいただける施設であり続けるよう、スタッフ一同努めてまいります。\n\n見学・入居のご相談はいつでも歓迎しております。どうぞお気軽にお声がけください。',
+    },
+    access: {
+      nearestStation: 'JR横須賀線・相鉄本線「保土ケ谷」駅',
+      walkTime: '徒歩約15分',
+      bus: '神奈川中央交通バス「坂本町」停留所 徒歩約3分',
+      parking: 'お車でお越しの場合は事前にお問い合わせください',
+      note: '〒240-0023 神奈川県横浜市保土ヶ谷区坂本町106-1',
+    },
   },
   'ciz-fujisawahonmachi': {
     name: 'シーズメディカルホーム藤沢本町',
@@ -34,6 +87,33 @@ const facilitiesData: Record<string, {
     openDate: '2026年6月オープン予定',
     description: '藤沢市に新規開設予定のホスピス住宅です。地域の医療・介護ニーズに応え、その人らしい暮らしをサポートします。',
     details: '2026年6月のオープンに向け、準備を進めています。開設後は訪問看護ステーション・訪問介護ステーションを併設し、包括的なケアを提供予定です。',
+    features: [
+      {
+        icon: '🏥',
+        title: '24時間看護体制（予定）',
+        desc: '開設後は夜間を含む24時間の看護体制を整備予定。安心して暮らせる環境を用意します。',
+      },
+      {
+        icon: '👨‍⚕️',
+        title: '訪問診療連携（予定）',
+        desc: '地域の訪問診療医との連携体制を構築し、医療依存度の高い方でも安心して入居いただける環境を整えます。',
+      },
+      {
+        icon: '🤝',
+        title: '訪問看護・介護ステーション併設（予定）',
+        desc: '開設時より訪問看護ステーション・訪問介護ステーションを併設し、一体的なケアを提供予定です。',
+      },
+      {
+        icon: '💚',
+        title: '看取りケア（予定）',
+        desc: '人生の最終章を穏やかに過ごせるよう、本人・ご家族の意思を尊重した看取りケアを提供予定です。',
+      },
+    ],
+    access: {
+      nearestStation: '小田急江ノ島線「藤沢本町」駅',
+      walkTime: '詳細は開設時にお知らせします',
+      note: '神奈川県藤沢市花の木（詳細住所は開設時に公開予定）',
+    },
   },
   'ciz-kawasakishiratori': {
     name: 'シーズメディカルホーム川崎白鳥',
@@ -42,6 +122,32 @@ const facilitiesData: Record<string, {
     openDate: '2026年秋頃オープン予定',
     description: '川崎市麻生区に開設予定のホスピス住宅です。地域に根ざした医療・介護サービスを提供します。',
     details: '2026年秋頃のオープンに向け、準備を進めています。詳細は随時お知らせいたします。',
+    features: [
+      {
+        icon: '🏥',
+        title: '24時間看護体制（予定）',
+        desc: '開設後は夜間を含む24時間の看護体制を整備予定。安心の医療・介護環境を構築します。',
+      },
+      {
+        icon: '👨‍⚕️',
+        title: '訪問診療連携（予定）',
+        desc: '地域の医療機関・訪問診療医との連携のもと、医療ニーズの高い方の入居に対応する体制を整えます。',
+      },
+      {
+        icon: '🤝',
+        title: '訪問看護・介護ステーション併設（予定）',
+        desc: '訪問看護・訪問介護ステーションを開設時より併設し、連携したケアを提供予定です。',
+      },
+      {
+        icon: '💚',
+        title: '看取りケア（予定）',
+        desc: '川崎エリアで安心した看取り・ターミナルケアを提供できる環境を整備します。',
+      },
+    ],
+    access: {
+      nearestStation: '小田急多摩線「白鳥」駅付近（詳細は開設時にお知らせ）',
+      note: '神奈川県川崎市麻生区（詳細住所は開設時に公開予定）',
+    },
   },
 }
 
@@ -135,6 +241,31 @@ export default function FacilityDetailPage({ params }: { params: { slug: string 
                   )}
                 </div>
 
+                {/* Features */}
+                {facility.features && facility.features.length > 0 && (
+                  <div className="bg-white border border-lightgray p-6 md:p-8">
+                    <h2 className="font-serif text-lg font-semibold text-green-deeper mb-1">施設の特徴</h2>
+                    <div className="w-8 h-0.5 bg-green-main mb-5" />
+                    <div className="grid sm:grid-cols-2 gap-5">
+                      {facility.features.map((feature) => (
+                        <div key={feature.title} className="flex gap-4">
+                          <div className="w-10 h-10 bg-green-light flex items-center justify-center flex-shrink-0 text-lg">
+                            {feature.icon}
+                          </div>
+                          <div>
+                            <p className="font-sans text-sm font-semibold text-green-deeper mb-1">
+                              {feature.title}
+                            </p>
+                            <p className="font-sans text-xs text-darkgray/80 leading-relaxed">
+                              {feature.desc}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Services (open only) */}
                 {facility.status === 'open' && (
                   <div className="bg-white border border-lightgray p-6 md:p-8">
@@ -148,6 +279,92 @@ export default function FacilityDetailPage({ params }: { params: { slug: string 
                         </div>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {/* Director message */}
+                {facility.director && (
+                  <div className="bg-white border border-lightgray p-6 md:p-8">
+                    <h2 className="font-serif text-lg font-semibold text-green-deeper mb-1">施設長からのメッセージ</h2>
+                    <div className="w-8 h-0.5 bg-green-main mb-5" />
+                    <div className="flex gap-5 items-start">
+                      {/* Avatar placeholder */}
+                      <div className="w-16 h-16 md:w-20 md:h-20 bg-green-light flex items-center justify-center flex-shrink-0 border border-lightgray">
+                        <svg className="w-8 h-8 text-green-deeper/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-sans text-xs text-midgray tracking-wide mb-0.5">{facility.director.title}</p>
+                        <p className="font-serif text-base font-semibold text-green-deeper mb-4">{facility.director.name}</p>
+                        <div className="space-y-3">
+                          {facility.director.message.split('\n\n').map((para, i) => (
+                            <p key={i} className="font-sans text-sm text-darkgray leading-[1.9]">{para}</p>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Access info */}
+                {facility.access && (
+                  <div className="bg-white border border-lightgray p-6 md:p-8">
+                    <h2 className="font-serif text-lg font-semibold text-green-deeper mb-1">アクセス情報</h2>
+                    <div className="w-8 h-0.5 bg-green-main mb-5" />
+
+                    {/* Map placeholder */}
+                    <div className="bg-green-light/50 h-48 md:h-56 flex items-center justify-center mb-5 border border-lightgray relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-green-light/30 to-green-pale/20" />
+                      {facility.googleMapsUrl ? (
+                        <a
+                          href={facility.googleMapsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="relative font-sans text-sm text-green-dark hover:text-green-deeper transition-colors flex items-center gap-2 bg-white px-4 py-2 border border-lightgray hover:border-green-main"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          Google マップで開く
+                        </a>
+                      ) : (
+                        <span className="relative font-serif text-sm text-green-deeper/40 tracking-wider">地図</span>
+                      )}
+                    </div>
+
+                    {/* Access details */}
+                    <dl className="space-y-3">
+                      <div className="flex gap-3">
+                        <dt className="font-sans text-xs text-midgray w-20 flex-shrink-0 pt-0.5 tracking-wide">最寄り駅</dt>
+                        <dd className="font-sans text-sm text-darkgray leading-relaxed">{facility.access.nearestStation}</dd>
+                      </div>
+                      {facility.access.walkTime && (
+                        <div className="flex gap-3">
+                          <dt className="font-sans text-xs text-midgray w-20 flex-shrink-0 pt-0.5 tracking-wide">徒歩</dt>
+                          <dd className="font-sans text-sm text-darkgray">{facility.access.walkTime}</dd>
+                        </div>
+                      )}
+                      {facility.access.bus && (
+                        <div className="flex gap-3">
+                          <dt className="font-sans text-xs text-midgray w-20 flex-shrink-0 pt-0.5 tracking-wide">バス</dt>
+                          <dd className="font-sans text-sm text-darkgray">{facility.access.bus}</dd>
+                        </div>
+                      )}
+                      {facility.access.parking && (
+                        <div className="flex gap-3">
+                          <dt className="font-sans text-xs text-midgray w-20 flex-shrink-0 pt-0.5 tracking-wide">駐車場</dt>
+                          <dd className="font-sans text-sm text-darkgray">{facility.access.parking}</dd>
+                        </div>
+                      )}
+                      {facility.access.note && (
+                        <div className="flex gap-3">
+                          <dt className="font-sans text-xs text-midgray w-20 flex-shrink-0 pt-0.5 tracking-wide">住所</dt>
+                          <dd className="font-sans text-sm text-darkgray">{facility.access.note}</dd>
+                        </div>
+                      )}
+                    </dl>
                   </div>
                 )}
 

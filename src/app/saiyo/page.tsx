@@ -4,7 +4,7 @@ import Footer from '@/components/layout/Footer'
 
 export const metadata = {
   title: '採用情報',
-  description: 'シーズメディカルホームで一緒に働きませんか。看護師・介護士・リハビリ専門職など各種職種を募集しています。',
+  description: 'シーズメディカルホームの採用情報。看護師・介護職員・PT/OT・相談員を募集中。神奈川県（横浜・藤沢・川崎）のホスピス型住宅での勤務。医療・介護の専門性を活かせる職場環境です。',
 }
 
 const values = [

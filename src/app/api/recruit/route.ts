@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient, hasValidSupabaseConfig } from '@/lib/supabase-server'
+import { getNotificationEmail, sendRecruitNotification } from '@/lib/email'
 
 export async function POST(request: Request) {
   try {
@@ -28,6 +29,24 @@ export async function POST(request: Request) {
     if (error) {
       console.error('Supabase error:', error)
       return NextResponse.json({ error: 'Database error' }, { status: 500 })
+    }
+
+    // メール通知（失敗しても送信自体は成功扱い）
+    const toEmail = await getNotificationEmail(supabase)
+    if (toEmail) {
+      await sendRecruitNotification(
+        {
+          firstName: body.firstName,
+          lastName: body.lastName,
+          email: body.email,
+          phone: body.phone,
+          jobType: body.jobType,
+          facility: body.facility,
+          jobTitle: body.jobTitle,
+          message: body.message,
+        },
+        toEmail
+      )
     }
 
     return NextResponse.json({ success: true })
