@@ -13,11 +13,17 @@ export default function SettingsSection() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // 通知先メール編集用
-  const [editingEmail, setEditingEmail] = useState(false)
-  const [emailValue, setEmailValue] = useState('')
+  // 通知先メール一覧（カンマ区切り文字列 → 配列）
+  const [emails, setEmails] = useState<string[]>([])
+  const [addingEmail, setAddingEmail] = useState(false)
+  const [newEmailValue, setNewEmailValue] = useState('')
   const [saving, setSaving] = useState(false)
   const [saveResult, setSaveResult] = useState<{ success?: string; error?: string } | null>(null)
+
+  const parseEmails = (raw: string | undefined): string[] => {
+    if (!raw) return []
+    return raw.split(',').map(e => e.trim()).filter(Boolean)
+  }
 
   const fetchSettings = useCallback(async () => {
     setLoading(true)
@@ -27,7 +33,7 @@ export default function SettingsSection() {
       if (!res.ok) throw new Error('Failed to load settings')
       const json: SettingsData = await res.json()
       setData(json)
-      setEmailValue(json.settings.notification_email || '')
+      setEmails(parseEmails(json.settings.notification_email))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'エラーが発生しました')
     } finally {
@@ -39,19 +45,17 @@ export default function SettingsSection() {
     fetchSettings()
   }, [fetchSettings])
 
-  async function handleSaveEmail() {
-    if (!emailValue.trim()) return
+  async function saveEmails(list: string[]) {
     setSaving(true)
     setSaveResult(null)
     try {
       const res = await fetch('/api/admin/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: 'notification_email', value: emailValue.trim() }),
+        body: JSON.stringify({ key: 'notification_email', value: list.join(',') }),
       })
       if (!res.ok) throw new Error('保存に失敗しました')
       setSaveResult({ success: '保存しました' })
-      setEditingEmail(false)
       await fetchSettings()
     } catch (err) {
       setSaveResult({ error: err instanceof Error ? err.message : '保存に失敗しました' })
@@ -60,10 +64,24 @@ export default function SettingsSection() {
     }
   }
 
-  function handleCancelEdit() {
-    setEditingEmail(false)
-    setEmailValue(data?.settings.notification_email || '')
-    setSaveResult(null)
+  async function handleAddEmail() {
+    const trimmed = newEmailValue.trim()
+    if (!trimmed) return
+    if (emails.includes(trimmed)) {
+      setSaveResult({ error: 'すでに登録されているアドレスです' })
+      return
+    }
+    const updated = [...emails, trimmed]
+    setEmails(updated)
+    setNewEmailValue('')
+    setAddingEmail(false)
+    await saveEmails(updated)
+  }
+
+  async function handleRemoveEmail(email: string) {
+    const updated = emails.filter(e => e !== email)
+    setEmails(updated)
+    await saveEmails(updated)
   }
 
   if (loading) {
@@ -75,7 +93,6 @@ export default function SettingsSection() {
   }
 
   if (error) {
-    // settings テーブルが未作成の可能性が高い → SQL ガイドを表示
     const isTableMissing = error.includes('Failed to load') || error.includes('relation') || error.includes('does not exist')
     return (
       <div className="max-w-2xl mx-auto px-6 py-10 space-y-5">
@@ -106,7 +123,7 @@ export default function SettingsSection() {
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 通知先メールの初期値（実際のアドレスに変更してください）
+-- 通知先メールの初期値（カンマ区切りで複数設定可）
 INSERT INTO settings (key, value)
 VALUES ('notification_email', 'your-email@example.com');`}</pre>
             </div>
@@ -118,9 +135,9 @@ VALUES ('notification_email', 'your-email@example.com');`}</pre>
               <p className="font-sans text-xs text-darkgray/70 mb-3 leading-relaxed">
                 settings テーブルを作らない場合は、Vercel の環境変数{' '}
                 <code className="bg-offwhite border border-lightgray px-1 py-0.5">NOTIFICATION_EMAIL</code>{' '}
-                に通知先アドレスを設定するだけで動作します。ただし管理画面からの変更はできなくなります。
+                に通知先アドレスを設定するだけで動作します。複数アドレスはカンマ区切りで指定できます。ただし管理画面からの変更はできなくなります。
               </p>
-              <pre className="bg-offwhite border border-lightgray p-3 text-xs font-mono text-darkgray">{`NOTIFICATION_EMAIL=your-email@example.com`}</pre>
+              <pre className="bg-offwhite border border-lightgray p-3 text-xs font-mono text-darkgray">{`NOTIFICATION_EMAIL=a@example.com,b@example.com`}</pre>
             </div>
           </>
         )}
@@ -134,8 +151,6 @@ VALUES ('notification_email', 'your-email@example.com');`}</pre>
       </div>
     )
   }
-
-  const currentEmail = data?.settings.notification_email
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-10 space-y-6">
@@ -163,73 +178,96 @@ VALUES ('notification_email', 'your-email@example.com');`}</pre>
         <h2 className="font-serif text-base text-green-deeper mb-1">メール通知設定</h2>
         <div className="w-6 h-0.5 bg-green-main mb-6" />
 
-        {/* 通知先メール */}
+        {/* 通知先メール一覧 */}
         <div className="mb-6">
           <label className="font-sans text-xs text-midgray tracking-widest uppercase block mb-2">
             通知先メールアドレス
           </label>
-          <p className="font-sans text-xs text-darkgray/60 mb-3 leading-relaxed">
-            お問い合わせ・採用応募フォームが送信されたとき、このアドレスに通知メールが届きます。
+          <p className="font-sans text-xs text-darkgray/60 mb-4 leading-relaxed">
+            お問い合わせ・採用応募フォームが送信されたとき、登録されたすべてのアドレスに通知メールが届きます。
           </p>
 
-          {editingEmail ? (
-            <div className="space-y-3">
+          {/* 登録済みアドレス一覧 */}
+          <div className="space-y-2 mb-3">
+            {emails.length === 0 ? (
+              <div className="bg-offwhite border border-lightgray px-3 py-2.5">
+                <span className="font-sans text-sm text-midgray italic">未設定</span>
+              </div>
+            ) : (
+              emails.map((email) => (
+                <div key={email} className="flex items-center gap-3 bg-offwhite border border-lightgray px-3 py-2.5">
+                  <span className="font-sans text-sm text-darkgray flex-1">{email}</span>
+                  <button
+                    onClick={() => handleRemoveEmail(email)}
+                    disabled={saving}
+                    className="font-sans text-xs text-pink-main hover:text-pink-dark transition-colors disabled:opacity-50 flex-shrink-0"
+                    aria-label={`${email} を削除`}
+                  >
+                    削除
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* 追加フォーム */}
+          {addingEmail ? (
+            <div className="space-y-2">
               <input
                 type="email"
-                value={emailValue}
-                onChange={(e) => setEmailValue(e.target.value)}
+                value={newEmailValue}
+                onChange={(e) => setNewEmailValue(e.target.value)}
                 placeholder="notification@example.com"
                 className="w-full font-sans text-sm text-darkgray border border-lightgray px-3 py-2.5 focus:outline-none focus:border-green-main"
                 autoFocus
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleSaveEmail()
-                  if (e.key === 'Escape') handleCancelEdit()
+                  if (e.key === 'Enter') handleAddEmail()
+                  if (e.key === 'Escape') {
+                    setAddingEmail(false)
+                    setNewEmailValue('')
+                    setSaveResult(null)
+                  }
                 }}
               />
               <div className="flex items-center gap-3">
                 <button
-                  onClick={handleSaveEmail}
-                  disabled={saving || !emailValue.trim()}
+                  onClick={handleAddEmail}
+                  disabled={saving || !newEmailValue.trim()}
                   className="font-sans text-sm font-medium bg-green-main text-white px-5 py-2 hover:bg-green-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {saving ? '保存中...' : '保存する'}
+                  {saving ? '保存中...' : '追加する'}
                 </button>
                 <button
-                  onClick={handleCancelEdit}
+                  onClick={() => {
+                    setAddingEmail(false)
+                    setNewEmailValue('')
+                    setSaveResult(null)
+                  }}
                   disabled={saving}
                   className="font-sans text-sm text-midgray hover:text-darkgray transition-colors"
                 >
                   キャンセル
                 </button>
               </div>
-              {saveResult?.error && (
-                <p className="font-sans text-xs text-pink-main">{saveResult.error}</p>
-              )}
             </div>
           ) : (
-            <div className="flex items-center gap-4">
-              <div className="flex-1 bg-offwhite border border-lightgray px-3 py-2.5">
-                {currentEmail ? (
-                  <span className="font-sans text-sm text-darkgray">{currentEmail}</span>
-                ) : (
-                  <span className="font-sans text-sm text-midgray italic">未設定</span>
-                )}
-              </div>
-              <button
-                onClick={() => {
-                  setEditingEmail(true)
-                  setSaveResult(null)
-                }}
-                className="font-sans text-sm text-green-dark hover:text-green-deeper transition-colors flex items-center gap-1.5 flex-shrink-0"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-                変更する
-              </button>
-            </div>
+            <button
+              onClick={() => {
+                setAddingEmail(true)
+                setSaveResult(null)
+              }}
+              className="font-sans text-sm text-green-dark hover:text-green-deeper transition-colors flex items-center gap-1.5"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
+              </svg>
+              アドレスを追加
+            </button>
           )}
 
+          {saveResult?.error && (
+            <p className="font-sans text-xs text-pink-main mt-2">{saveResult.error}</p>
+          )}
           {saveResult?.success && (
             <div className="mt-3 flex items-center gap-2 text-green-dark">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

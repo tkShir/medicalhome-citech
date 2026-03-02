@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient, hasValidSupabaseConfig } from '@/lib/supabase-server'
-import { getNotificationEmail, sendRecruitNotification } from '@/lib/email'
+import { getNotificationEmails, sendRecruitNotification } from '@/lib/email'
 
 export async function POST(request: Request) {
   try {
@@ -32,8 +32,8 @@ export async function POST(request: Request) {
     }
 
     // メール通知（失敗しても送信自体は成功扱い）
-    const toEmail = await getNotificationEmail(supabase)
-    if (toEmail) {
+    const toEmails = await getNotificationEmails(supabase)
+    if (toEmails.length > 0) {
       await sendRecruitNotification(
         {
           firstName: body.firstName,
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
           jobTitle: body.jobTitle,
           message: body.message,
         },
-        toEmail
+        toEmails
       )
     }
 

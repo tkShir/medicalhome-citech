@@ -14,9 +14,12 @@ function getFromEmail(): string {
 
 // ── settings テーブルから通知先メールを取得 ────────────────────
 // 優先順位: 1) settings テーブル  2) NOTIFICATION_EMAIL 環境変数
-export async function getNotificationEmail(
+// カンマ区切りで複数アドレスを返す（例: ['a@example.com', 'b@example.com']）
+export async function getNotificationEmails(
   supabase: SupabaseClient
-): Promise<string | null> {
+): Promise<string[]> {
+  let raw: string | null = null
+
   // まず settings テーブルを試みる
   try {
     const { data, error } = await supabase
@@ -26,17 +29,21 @@ export async function getNotificationEmail(
       .single()
 
     if (!error && data?.value) {
-      return data.value as string
+      raw = data.value as string
     }
   } catch {
     // settings テーブルが存在しない場合などはフォールバックへ
   }
 
   // 環境変数にフォールバック
-  const envEmail = process.env.NOTIFICATION_EMAIL
-  if (envEmail) return envEmail
+  if (!raw) {
+    raw = process.env.NOTIFICATION_EMAIL ?? null
+  }
 
-  return null
+  if (!raw) return []
+
+  // カンマ区切りをパースし、空白除去・空文字除外
+  return raw.split(',').map(e => e.trim()).filter(Boolean)
 }
 
 // ── HTML メール本文ヘルパー ───────────────────────────────────
@@ -114,13 +121,14 @@ export interface ContactNotificationData {
 
 export async function sendContactNotification(
   data: ContactNotificationData,
-  toEmail: string
+  toEmails: string[]
 ): Promise<void> {
   const resend = getResendClient()
   if (!resend) {
     console.log('[email] RESEND_API_KEY not set – skipping contact notification')
     return
   }
+  if (toEmails.length === 0) return
 
   const name = `${data.lastName}${data.firstName}`
   const rows: { label: string; value: string }[] = [
@@ -134,7 +142,7 @@ export async function sendContactNotification(
   try {
     await resend.emails.send({
       from: `シーズメディカルホーム <${getFromEmail()}>`,
-      to: toEmail,
+      to: toEmails,
       subject: `【お問い合わせ】${name}様よりお問い合わせが届きました`,
       html: buildEmailHtml('お問い合わせ通知', rows),
     })
@@ -158,13 +166,14 @@ export interface RecruitNotificationData {
 
 export async function sendRecruitNotification(
   data: RecruitNotificationData,
-  toEmail: string
+  toEmails: string[]
 ): Promise<void> {
   const resend = getResendClient()
   if (!resend) {
     console.log('[email] RESEND_API_KEY not set – skipping recruit notification')
     return
   }
+  if (toEmails.length === 0) return
 
   const name = `${data.lastName}${data.firstName}`
   const rows: { label: string; value: string }[] = [
@@ -180,7 +189,7 @@ export async function sendRecruitNotification(
   try {
     await resend.emails.send({
       from: `シーズメディカルホーム <${getFromEmail()}>`,
-      to: toEmail,
+      to: toEmails,
       subject: `【採用応募】${name}様より応募が届きました`,
       html: buildEmailHtml('採用応募通知', rows),
     })
