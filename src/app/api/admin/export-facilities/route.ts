@@ -8,7 +8,7 @@ const HEADERS = [
   '説明', '詳細説明', 'オープン日', '最終更新日',
   '施設長名', '施設長役職', '施設長メッセージ',
   '最寄り駅', '徒歩時間', 'バスアクセス', '駐車場',
-  '重要事項説明書URL', 'サービス', '施設の特徴',
+  '情報公開事業所', '情報公開備考', 'サービス', '施設の特徴',
 ]
 
 function normalizeStatusForExport(status: string): string {
@@ -34,11 +34,11 @@ export async function GET() {
       .from('facilities')
       .select(`
         facility_id, name, address, web_address, tel, fax, email,
-        job_medley_url, minnano_kaigo_url, google_maps_url, recruit_url, document_url, status,
+        job_medley_url, minnano_kaigo_url, google_maps_url, recruit_url, status,
         description, details, open_date, last_updated,
         director_name, director_title, director_message,
         access_nearest_station, access_walk_time, access_bus, access_parking,
-        services, features
+        disclosure_offices, disclosure_note, services, features
       `)
       .order('created_at')
 
@@ -68,7 +68,13 @@ export async function GET() {
       cell(f.access_walk_time),
       cell(f.access_bus),
       cell(f.access_parking),
-      cell(f.document_url),
+      // 情報公開事業所: パイプ+コロン形式（インポートと同じ形式）
+      cell(Array.isArray(f.disclosure_offices)
+        ? f.disclosure_offices.map((o: { name: string; url?: string }) =>
+            o.url ? `${o.name}:${o.url}` : o.name
+          ).join('|')
+        : null),
+      cell(f.disclosure_note),
       // サービス: パイプ区切り（インポートと同じ形式）
       cell(Array.isArray(f.services) ? f.services.join('|') : null),
       // 施設の特徴: JSON（インポートと同じ形式）

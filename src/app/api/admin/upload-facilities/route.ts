@@ -33,8 +33,22 @@ function parseFeatures(raw: string): { icon: string; title: string; desc: string
   }
 }
 
-// 「サービス」列のパイプ区切り文字列をパース
-function parseServices(raw: string): string[] | null {
+// 「情報公開事業所」列のパース: `住宅:https://...|訪問介護|訪問看護:https://...`
+// 名称部分は日本語のみ（コロンなし）なので、最初のコロンでname/urlを分割できる
+function parseDisclosureOffices(raw: string): { name: string; url?: string }[] | null {
+  const trimmed = raw?.trim()
+  if (!trimmed) return null
+  const items = trimmed.split('|').map(s => {
+    const idx = s.indexOf(':')
+    if (idx > 0) {
+      const name = s.substring(0, idx).trim()
+      const url = s.substring(idx + 1).trim()
+      return url ? { name, url } : { name }
+    }
+    return { name: s.trim() }
+  }).filter(item => item.name)
+  return items.length > 0 ? items : null
+}
   const trimmed = raw?.trim()
   if (!trimmed) return null
   const items = trimmed.split('|').map(s => s.trim()).filter(Boolean)
@@ -78,7 +92,8 @@ function csvRowToFacility(row: Record<string, string>) {
     access_walk_time: str(row['徒歩時間']),
     access_bus: str(row['バスアクセス']),
     access_parking: str(row['駐車場']),
-    document_url: str(row['重要事項説明書URL']),
+    disclosure_offices: parseDisclosureOffices(row['情報公開事業所'] || ''),
+    disclosure_note: str(row['情報公開備考']),
     services: parseServices(row['サービス'] || ''),
     features: parseFeatures(row['施設の特徴'] || ''),
     updated_at: new Date().toISOString(),

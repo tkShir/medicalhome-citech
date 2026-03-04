@@ -60,7 +60,8 @@ CREATE TABLE IF NOT EXISTS facilities (
   access_walk_time TEXT,
   access_bus TEXT,
   access_parking TEXT,
-  document_url TEXT,
+  disclosure_offices JSONB,
+  disclosure_note TEXT,
   services JSONB,
   features JSONB,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -90,11 +91,14 @@ ALTER TABLE facilities
   ADD COLUMN IF NOT EXISTS access_walk_time TEXT,
   ADD COLUMN IF NOT EXISTS access_bus TEXT,
   ADD COLUMN IF NOT EXISTS access_parking TEXT,
-  ADD COLUMN IF NOT EXISTS document_url TEXT,
+  ADD COLUMN IF NOT EXISTS disclosure_offices JSONB,
+  ADD COLUMN IF NOT EXISTS disclosure_note TEXT,
   ADD COLUMN IF NOT EXISTS services JSONB,
   ADD COLUMN IF NOT EXISTS features JSONB;`
 
-const CSV_HEADERS = `施設名,住所,WEB表示住所,TEL ID,FAX,E-mail,ジョブメドレーURL,みんなの介護URL,GoogleMapsURL,自社採用,施設ID,Status,説明,詳細説明,オープン日,最終更新日,施設長名,施設長役職,施設長メッセージ,最寄り駅,徒歩時間,バスアクセス,駐車場,重要事項説明書URL,サービス,施設の特徴`
+const CSV_HEADERS = `施設名,住所,WEB表示住所,TEL ID,FAX,E-mail,ジョブメドレーURL,みんなの介護URL,GoogleMapsURL,自社採用,施設ID,Status,説明,詳細説明,オープン日,最終更新日,施設長名,施設長役職,施設長メッセージ,最寄り駅,徒歩時間,バスアクセス,駐車場,情報公開事業所,情報公開備考,サービス,施設の特徴`
+
+const DISCLOSURE_EXAMPLE = `住宅:https://drive.google.com/...|訪問介護|訪問看護:https://drive.google.com/...|居宅介護支援`
 
 const FEATURES_EXAMPLE = `[{"icon":"🏥","title":"24時間看護体制","desc":"夜間を含む24時間、常駐の看護師が対応します。"},{"icon":"👨‍⚕️","title":"訪問診療との連携","desc":"定期的に訪問診療医が来訪します。"}]`
 
@@ -606,6 +610,11 @@ export default function FacilitiesSection() {
           </summary>
           <div className="mt-3 space-y-3">
             <pre className="bg-offwhite border border-lightgray p-3 text-xs font-mono text-darkgray overflow-x-auto whitespace-pre">{CSV_HEADERS}</pre>
+            <div>
+              <p className="font-sans text-xs text-midgray mb-1">「情報公開事業所」列の形式例（パイプ区切り、URLありは<code className="bg-offwhite px-1">事業所名:URL</code>）:</p>
+              <pre className="bg-offwhite border border-lightgray p-3 text-xs font-mono text-darkgray overflow-x-auto whitespace-pre">{DISCLOSURE_EXAMPLE}</pre>
+              <p className="font-sans text-xs text-darkgray/50 mt-1">URLなしの事業所は名称のみ記載（リンクなしで表示）。</p>
+            </div>
             <div>
               <p className="font-sans text-xs text-midgray mb-1">「サービス」列の形式例（パイプ区切り）:</p>
               <pre className="bg-offwhite border border-lightgray p-3 text-xs font-mono text-darkgray overflow-x-auto whitespace-pre">{SERVICES_EXAMPLE}</pre>
