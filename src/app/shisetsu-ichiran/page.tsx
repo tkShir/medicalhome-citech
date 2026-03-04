@@ -93,13 +93,13 @@ export default async function FacilitiesPage() {
                           </>
                         )}
                         {facility.status === 'coming_soon' && (
-                          <div className="absolute top-3 right-3 bg-white border border-lightgray px-2 py-0.5">
-                            <span className="font-sans text-[10px] tracking-widest text-darkgray uppercase">Coming Soon</span>
+                          <div className="absolute top-3 right-3 bg-white border border-lightgray px-2 py-0.5 flex items-center">
+                            <span className="font-sans text-[10px] tracking-widest text-darkgray uppercase leading-none">Coming Soon</span>
                           </div>
                         )}
                         {facility.status === 'open' && (
-                          <div className="absolute top-3 right-3 bg-green-dark px-2 py-0.5">
-                            <span className="font-sans text-[10px] tracking-widest text-white uppercase">Open</span>
+                          <div className="absolute top-3 right-3 bg-green-dark px-2 py-0.5 flex items-center">
+                            <span className="font-sans text-[10px] tracking-widest text-white uppercase leading-none">Open</span>
                           </div>
                         )}
                       </div>
