@@ -106,6 +106,7 @@ export default function FacilitiesSection() {
   const [uploading, setUploading] = useState(false)
   const [uploadResult, setUploadResult] = useState<{ success?: string; error?: string } | null>(null)
   const csvInputRef = useRef<HTMLInputElement>(null)
+  const [exporting, setExporting] = useState(false)
 
   const [changingStatusId, setChangingStatusId] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
@@ -155,6 +156,27 @@ export default function FacilitiesSection() {
     } finally {
       setUploading(false)
       if (csvInputRef.current) csvInputRef.current.value = ''
+    }
+  }
+
+  async function handleExportCsv() {
+    setExporting(true)
+    try {
+      const res = await fetch('/api/admin/export-facilities')
+      if (!res.ok) throw new Error('Export failed')
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      const disposition = res.headers.get('Content-Disposition') ?? ''
+      const match = disposition.match(/filename="([^"]+)"/)
+      a.download = match ? match[1] : 'facilities.csv'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      console.error('Export failed')
+    } finally {
+      setExporting(false)
     }
   }
 
@@ -314,7 +336,7 @@ export default function FacilitiesSection() {
             ※ Status の値: <code className="bg-offwhite px-1">Open</code> / <code className="bg-offwhite px-1">Coming Soon</code> / <code className="bg-offwhite px-1">Not Published</code>
           </p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <label className={`inline-flex items-center gap-2 px-5 py-2.5 font-sans text-sm font-medium cursor-pointer transition-colors ${uploading ? 'bg-lightgray text-midgray cursor-not-allowed' : 'bg-green-main text-white hover:bg-green-dark'}`}>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -329,6 +351,16 @@ export default function FacilitiesSection() {
               className="sr-only"
             />
           </label>
+          <button
+            onClick={handleExportCsv}
+            disabled={exporting}
+            className={`inline-flex items-center gap-2 px-5 py-2.5 font-sans text-sm font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${exporting ? 'border-lightgray text-midgray' : 'border-green-main text-green-dark hover:bg-green-light'}`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            {exporting ? 'エクスポート中...' : 'CSVエクスポート'}
+          </button>
           {uploadResult?.success && (
             <div className="flex items-center gap-2 text-green-dark">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
