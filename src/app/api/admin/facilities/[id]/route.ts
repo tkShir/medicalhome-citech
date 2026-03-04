@@ -28,3 +28,23 @@ export async function PATCH(
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const supabase = createServerSupabaseClient()
+    // facility_images は ON DELETE CASCADE で自動削除される
+    const { error } = await supabase
+      .from('facilities')
+      .delete()
+      .eq('id', params.id)
+
+    if (error) throw error
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Server error'
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}

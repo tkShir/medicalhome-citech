@@ -40,7 +40,7 @@ interface FacilityRow {
   access_walk_time: string | null
   access_bus: string | null
   access_parking: string | null
-  access_note: string | null
+  services: string[] | null
   features: Feature[] | null
   facility_images: FacilityImage[]
 }
@@ -54,8 +54,8 @@ const getFacility = cache(async (slug: string): Promise<FacilityRow | null> => {
       google_maps_url, job_medley_url, minnano_kaigo_url, recruit_url,
       description, details, open_date, last_updated,
       director_name, director_title, director_message,
-      access_nearest_station, access_walk_time, access_bus, access_parking, access_note,
-      features,
+      access_nearest_station, access_walk_time, access_bus, access_parking,
+      services, features,
       facility_images(id, url, sort_order)
     `)
     .eq('slug', slug)
@@ -73,17 +73,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     description: facility.description ?? facility.name,
   }
 }
-
-const services = [
-  '24時間看護体制',
-  '訪問診療連携',
-  '訪問看護ステーション',
-  '訪問介護ステーション',
-  '食事提供',
-  'リハビリサービス',
-  'グリーフケア',
-  '看取りケア',
-]
 
 export default async function FacilityDetailPage({ params }: { params: { slug: string } }) {
   const facility = await getFacility(params.slug)
@@ -226,13 +215,13 @@ export default async function FacilityDetailPage({ params }: { params: { slug: s
                   </div>
                 )}
 
-                {/* Services (open only) */}
-                {facility.status === 'open' && (
+                {/* Services */}
+                {facility.services && facility.services.length > 0 && (
                   <div className="bg-white border border-lightgray p-6 md:p-8">
                     <h2 className="font-serif text-lg font-semibold text-green-deeper mb-1">提供サービス</h2>
                     <div className="w-8 h-0.5 bg-green-main mb-5" />
                     <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                      {services.map((service) => (
+                      {facility.services.map((service) => (
                         <div key={service} className="flex items-center gap-2 font-sans text-sm text-darkgray">
                           <span className="w-1.5 h-1.5 bg-green-main flex-shrink-0" />
                           {service}
@@ -322,10 +311,10 @@ export default async function FacilityDetailPage({ params }: { params: { slug: s
                           <dd className="font-sans text-sm text-darkgray">{facility.access_parking}</dd>
                         </div>
                       )}
-                      {facility.access_note && (
+                      {facility.web_address && (
                         <div className="flex gap-3">
                           <dt className="font-sans text-xs text-midgray w-20 flex-shrink-0 pt-0.5 tracking-wide">住所</dt>
-                          <dd className="font-sans text-sm text-darkgray">{facility.access_note}</dd>
+                          <dd className="font-sans text-sm text-darkgray">{facility.web_address}</dd>
                         </div>
                       )}
                     </dl>

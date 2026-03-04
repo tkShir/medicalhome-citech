@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS facilities (
   access_walk_time TEXT,
   access_bus TEXT,
   access_parking TEXT,
-  access_note TEXT,
+  services JSONB,
   features JSONB,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -89,12 +89,14 @@ ALTER TABLE facilities
   ADD COLUMN IF NOT EXISTS access_walk_time TEXT,
   ADD COLUMN IF NOT EXISTS access_bus TEXT,
   ADD COLUMN IF NOT EXISTS access_parking TEXT,
-  ADD COLUMN IF NOT EXISTS access_note TEXT,
+  ADD COLUMN IF NOT EXISTS services JSONB,
   ADD COLUMN IF NOT EXISTS features JSONB;`
 
-const CSV_HEADERS = `施設名,住所,WEB表示住所,TEL ID,FAX,E-mail,ジョブメドレーURL,みんなの介護URL,GoogleMapsURL,自社採用,施設ID,Status,説明,詳細説明,オープン日,最終更新日,施設長名,施設長役職,施設長メッセージ,最寄り駅,徒歩時間,バスアクセス,駐車場,住所備考,施設の特徴`
+const CSV_HEADERS = `施設名,住所,WEB表示住所,TEL ID,FAX,E-mail,ジョブメドレーURL,みんなの介護URL,GoogleMapsURL,自社採用,施設ID,Status,説明,詳細説明,オープン日,最終更新日,施設長名,施設長役職,施設長メッセージ,最寄り駅,徒歩時間,バスアクセス,駐車場,サービス,施設の特徴`
 
 const FEATURES_EXAMPLE = `[{"icon":"🏥","title":"24時間看護体制","desc":"夜間を含む24時間、常駐の看護師が対応します。"},{"icon":"👨‍⚕️","title":"訪問診療との連携","desc":"定期的に訪問診療医が来訪します。"}]`
+
+const SERVICES_EXAMPLE = `24時間看護体制|訪問診療連携|訪問看護ステーション|訪問介護ステーション|食事提供|リハビリサービス|看取りケア|グリーフケア`
 
 export default function FacilitiesSection() {
   const [facilities, setFacilities] = useState<Facility[]>([])
@@ -110,6 +112,8 @@ export default function FacilitiesSection() {
   const [uploadingImageForId, setUploadingImageForId] = useState<string | null>(null)
   const [deletingImageId, setDeletingImageId] = useState<string | null>(null)
   const [imageResult, setImageResult] = useState<{ facilityId: string; success?: string; error?: string } | null>(null)
+  const [deletingFacilityId, setDeletingFacilityId] = useState<string | null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   const loadFacilities = useCallback(async () => {
     setLoading(true)
@@ -151,6 +155,21 @@ export default function FacilitiesSection() {
     } finally {
       setUploading(false)
       if (csvInputRef.current) csvInputRef.current.value = ''
+    }
+  }
+
+  async function handleDeleteFacility(facilityId: string) {
+    setDeletingFacilityId(facilityId)
+    try {
+      const res = await fetch(`/api/admin/facilities/${facilityId}`, { method: 'DELETE' })
+      if (res.ok) {
+        setFacilities(prev => prev.filter(f => f.id !== facilityId))
+        setConfirmDeleteId(null)
+      }
+    } catch {
+      console.error('Delete failed')
+    } finally {
+      setDeletingFacilityId(null)
     }
   }
 
@@ -401,6 +420,36 @@ export default function FacilitiesSection() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
+
+                  {/* Delete */}
+                  {confirmDeleteId === facility.id ? (
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="font-sans text-xs text-pink-main">本当に削除しますか？</span>
+                      <button
+                        onClick={() => handleDeleteFacility(facility.id)}
+                        disabled={deletingFacilityId === facility.id}
+                        className="font-sans text-xs text-white bg-pink-main hover:bg-pink-dark px-2 py-0.5 disabled:opacity-50"
+                      >
+                        {deletingFacilityId === facility.id ? '削除中...' : '削除する'}
+                      </button>
+                      <button
+                        onClick={() => setConfirmDeleteId(null)}
+                        className="font-sans text-xs text-midgray hover:text-darkgray"
+                      >
+                        キャンセル
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmDeleteId(facility.id)}
+                      className="font-sans text-xs text-midgray hover:text-pink-main transition-colors shrink-0 flex items-center gap-1"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      削除
+                    </button>
+                  )}
                 </div>
 
                 {/* Image management panel */}
@@ -523,6 +572,10 @@ export default function FacilitiesSection() {
           </summary>
           <div className="mt-3 space-y-3">
             <pre className="bg-offwhite border border-lightgray p-3 text-xs font-mono text-darkgray overflow-x-auto whitespace-pre">{CSV_HEADERS}</pre>
+            <div>
+              <p className="font-sans text-xs text-midgray mb-1">「サービス」列の形式例（パイプ区切り）:</p>
+              <pre className="bg-offwhite border border-lightgray p-3 text-xs font-mono text-darkgray overflow-x-auto whitespace-pre">{SERVICES_EXAMPLE}</pre>
+            </div>
             <div>
               <p className="font-sans text-xs text-midgray mb-1">「施設の特徴」列のJSON形式例:</p>
               <pre className="bg-offwhite border border-lightgray p-3 text-xs font-mono text-darkgray overflow-x-auto whitespace-pre">{FEATURES_EXAMPLE}</pre>

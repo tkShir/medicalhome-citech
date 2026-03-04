@@ -33,6 +33,14 @@ function parseFeatures(raw: string): { icon: string; title: string; desc: string
   }
 }
 
+// 「サービス」列のパイプ区切り文字列をパース
+function parseServices(raw: string): string[] | null {
+  const trimmed = raw?.trim()
+  if (!trimmed) return null
+  const items = trimmed.split('|').map(s => s.trim()).filter(Boolean)
+  return items.length > 0 ? items : null
+}
+
 // 空文字→null
 function str(v: string | undefined): string | null {
   return v?.trim() || null
@@ -70,7 +78,7 @@ function csvRowToFacility(row: Record<string, string>) {
     access_walk_time: str(row['徒歩時間']),
     access_bus: str(row['バスアクセス']),
     access_parking: str(row['駐車場']),
-    access_note: str(row['住所備考']),
+    services: parseServices(row['サービス'] || ''),
     features: parseFeatures(row['施設の特徴'] || ''),
     updated_at: new Date().toISOString(),
   }
