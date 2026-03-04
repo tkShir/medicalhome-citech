@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface RecruitFormProps {
   jobListingId?: string
@@ -34,6 +34,16 @@ export default function RecruitForm({
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
 
+  useEffect(() => {
+    // GTM / GA4 求人フォーム表示イベント
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(window as any).dataLayer?.push({
+      event: 'recruit_form_open',
+      job_type: jobTypeDefault || undefined,
+      job_title: jobTitle || undefined,
+    })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setSubmitting(true)
@@ -63,7 +73,7 @@ export default function RecruitForm({
       // GTM / GA4 コンバージョンイベント
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(window as any).dataLayer?.push({
-        event: 'form_submit',
+        event: 'form_submit_vercel',
         form_type: 'recruit',
         job_type: data.jobType || undefined,
         facility: data.facility || undefined,

@@ -40,6 +40,8 @@ export default function Header() {
           <a
             href="tel:03-3797-4002"
             className="font-sans text-sm font-semibold tracking-wider hover:text-green-pale transition-colors"
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onClick={() => (window as any).dataLayer?.push({ event: 'phone_click' })}
           >
             ☎&ensp;03-3797-4002
           </a>
@@ -101,6 +103,8 @@ export default function Header() {
               href="tel:03-3797-4002"
               className="font-sans text-sm font-semibold text-white bg-green-dark px-4 py-2 tracking-wider hover:bg-green-deeper transition-colors"
               aria-label="電話相談"
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onClick={() => (window as any).dataLayer?.push({ event: 'phone_click' })}
             >
               ☎ 電話
             </a>
@@ -146,7 +150,12 @@ export default function Header() {
               <Link href="/contact" className="btn-primary w-full text-center">
                 お問い合わせフォーム
               </Link>
-              <a href="tel:03-3797-4002" className="btn-primary-outline w-full text-center">
+              <a
+                href="tel:03-3797-4002"
+                className="btn-primary-outline w-full text-center"
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onClick={() => (window as any).dataLayer?.push({ event: 'phone_click' })}
+              >
                 ☎&ensp;03-3797-4002
               </a>
             </div>
