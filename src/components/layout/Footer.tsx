@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 
 const footerLinks = {
@@ -96,6 +98,8 @@ export default function Footer() {
             <a
               href="tel:03-3797-4002"
               className="font-sans text-sm font-semibold text-white hover:text-green-pale transition-colors mt-3 block tracking-wider"
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onClick={() => (window as any).dataLayer?.push({ event: 'phone_click' })}
             >
               ☎&ensp;03-3797-4002
             </a>

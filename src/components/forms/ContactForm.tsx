@@ -33,7 +33,7 @@ export default function ContactForm() {
       // GTM / GA4 コンバージョンイベント
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(window as any).dataLayer?.push({
-        event: 'form_submit',
+        event: 'form_submit_vercel',
         form_type: 'contact',
       })
       setSubmitted(true)
