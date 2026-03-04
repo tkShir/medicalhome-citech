@@ -137,20 +137,35 @@ export async function POST(request: Request) {
 
     const supabase = createServerSupabaseClient()
 
-    // 施設名をユニークキーとしてUPSERT
-    const { error: upsertError } = await supabase
-      .from('facilities')
-      .upsert(validRecords, {
-        onConflict: 'name',
-        ignoreDuplicates: false,
-      })
+    // facility_id ありとなしで分けてUPSERT
+    // （両列にユニーク制約があるため、どちらかが競合すると失敗する）
+    const withFacilityId = validRecords.filter(r => r.facility_id)
+    const withoutFacilityId = validRecords.filter(r => !r.facility_id)
 
-    if (upsertError) {
-      console.error('Upsert error:', upsertError)
-      return NextResponse.json(
-        { error: 'アップロードに失敗しました: ' + upsertError.message },
-        { status: 500 }
-      )
+    if (withFacilityId.length > 0) {
+      const { error } = await supabase
+        .from('facilities')
+        .upsert(withFacilityId, { onConflict: 'facility_id', ignoreDuplicates: false })
+      if (error) {
+        console.error('Upsert error (facility_id):', error)
+        return NextResponse.json(
+          { error: 'アップロードに失敗しました: ' + error.message },
+          { status: 500 }
+        )
+      }
+    }
+
+    if (withoutFacilityId.length > 0) {
+      const { error } = await supabase
+        .from('facilities')
+        .upsert(withoutFacilityId, { onConflict: 'name', ignoreDuplicates: false })
+      if (error) {
+        console.error('Upsert error (name):', error)
+        return NextResponse.json(
+          { error: 'アップロードに失敗しました: ' + error.message },
+          { status: 500 }
+        )
+      }
     }
 
     return NextResponse.json({
