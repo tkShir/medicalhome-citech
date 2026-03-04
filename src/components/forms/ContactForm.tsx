@@ -30,6 +30,12 @@ export default function ContactForm() {
         body: JSON.stringify(data),
       })
       if (!res.ok) throw new Error('送信に失敗しました')
+      // GTM / GA4 コンバージョンイベント
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(window as any).dataLayer?.push({
+        event: 'form_submit',
+        form_type: 'contact',
+      })
       setSubmitted(true)
     } catch {
       setError('送信に失敗しました。時間をおいて再度お試しください。')
