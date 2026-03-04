@@ -7,7 +7,7 @@ export async function GET() {
     const { data, error } = await supabase
       .from('facilities')
       .select('id, facility_id, name, slug, web_address, status, facility_images(id, url, storage_path, sort_order)')
-      .order('name')
+      .order('created_at')
 
     if (error) throw error
     return NextResponse.json({ facilities: data || [] })

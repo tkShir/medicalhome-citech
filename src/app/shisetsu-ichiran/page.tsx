@@ -3,21 +3,6 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 
-// DBに存在しない表示用テキスト（slug別）
-const FACILITY_META: Record<string, { description?: string; openDate?: string }> = {
-  'abee-hodogaya': {
-    description: '在宅型有料老人ホーム。24時間体制の医療・介護サービスを提供するホスピス住宅です。',
-  },
-  'ciz-fujisawahonmachi': {
-    description: '藤沢市に新規開設予定のホスピス住宅。地域の医療・介護ニーズに応えます。',
-    openDate: '2026年6月オープン予定',
-  },
-  'ciz-kawasakishiratori': {
-    description: '川崎市麻生区に開設予定のホスピス住宅。安心・安全な暮らしをサポートします。',
-    openDate: '2026年秋頃オープン予定',
-  },
-}
-
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
@@ -36,6 +21,8 @@ interface Facility {
   slug: string
   web_address: string | null
   status: 'not_published' | 'coming_soon' | 'open'
+  description: string | null
+  open_date: string | null
   facility_images: FacilityImage[]
 }
 
@@ -46,7 +33,7 @@ export default async function FacilitiesPage() {
   try {
     const { data } = await supabase
       .from('facilities')
-      .select('id, name, slug, web_address, status, facility_images(url, sort_order)')
+      .select('id, name, slug, web_address, status, description, open_date, facility_images(url, sort_order)')
       .neq('status', 'not_published')
       .order('created_at')
     facilities = (data as Facility[]) ?? []
@@ -77,7 +64,6 @@ export default async function FacilitiesPage() {
             ) : (
               <div className="grid md:grid-cols-3 gap-6">
                 {facilities.map((facility) => {
-                  const meta = FACILITY_META[facility.slug] ?? {}
                   const firstImage = [...facility.facility_images]
                     .sort((a, b) => a.sort_order - b.sort_order)[0]
 
@@ -132,14 +118,14 @@ export default async function FacilitiesPage() {
                             {facility.web_address}
                           </p>
                         )}
-                        {meta.openDate && (
+                        {facility.open_date && (
                           <p className="font-sans text-xs text-green-dark bg-green-light px-2 py-1 inline-block mb-3 self-start">
-                            {meta.openDate}
+                            {facility.open_date}
                           </p>
                         )}
-                        {meta.description && (
+                        {facility.description && (
                           <p className="font-sans text-xs text-darkgray/70 leading-relaxed flex-1">
-                            {meta.description}
+                            {facility.description}
                           </p>
                         )}
                         <div className="mt-4 pt-4 border-t border-lightgray flex items-center justify-between">

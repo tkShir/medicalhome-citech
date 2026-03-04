@@ -21,28 +21,57 @@ function toSlug(str: string): string {
     .replace(/^-|-$/g, '')
 }
 
+// 「施設の特徴」列のJSON文字列をパース
+function parseFeatures(raw: string): { icon: string; title: string; desc: string }[] | null {
+  const trimmed = raw?.trim()
+  if (!trimmed) return null
+  try {
+    const parsed = JSON.parse(trimmed)
+    return Array.isArray(parsed) ? parsed : null
+  } catch {
+    return null
+  }
+}
+
+// 空文字→null
+function str(v: string | undefined): string | null {
+  return v?.trim() || null
+}
+
 function csvRowToFacility(row: Record<string, string>) {
   const name = row['施設名']?.trim() || ''
   const facilityId = row['施設ID']?.trim() || ''
   const rawStatus = row['Status']?.trim() || row['status']?.trim() || ''
-
-  // スラグは施設IDを優先、なければ施設名のASCII部分から生成
   const slug = facilityId ? toSlug(facilityId) : toSlug(name)
 
   return {
     facility_id: facilityId || null,
     name,
     slug: slug || `facility-${Date.now()}`,
-    address: row['住所']?.trim() || null,
-    web_address: row['WEB表示住所']?.trim() || null,
-    tel: row['TEL ID']?.trim() || null,
-    fax: row['FAX']?.trim() || null,
-    email: row['E-mail']?.trim() || null,
-    job_medley_url: row['ジョブメドレーURL']?.trim() || null,
-    minnano_kaigo_url: row['みんなの介護URL']?.trim() || null,
-    google_maps_url: row['GoogleMapsURL']?.trim() || null,
-    recruit_url: row['自社採用']?.trim() || null,
+    address: str(row['住所']),
+    web_address: str(row['WEB表示住所']),
+    tel: str(row['TEL ID']),
+    fax: str(row['FAX']),
+    email: str(row['E-mail']),
+    job_medley_url: str(row['ジョブメドレーURL']),
+    minnano_kaigo_url: str(row['みんなの介護URL']),
+    google_maps_url: str(row['GoogleMapsURL']),
+    recruit_url: str(row['自社採用']),
     status: normalizeStatus(rawStatus),
+    // リッチコンテンツ
+    description: str(row['説明']),
+    details: str(row['詳細説明']),
+    open_date: str(row['オープン日']),
+    last_updated: str(row['最終更新日']),
+    director_name: str(row['施設長名']),
+    director_title: str(row['施設長役職']),
+    director_message: str(row['施設長メッセージ']),
+    access_nearest_station: str(row['最寄り駅']),
+    access_walk_time: str(row['徒歩時間']),
+    access_bus: str(row['バスアクセス']),
+    access_parking: str(row['駐車場']),
+    access_note: str(row['住所備考']),
+    features: parseFeatures(row['施設の特徴'] || ''),
     updated_at: new Date().toISOString(),
   }
 }

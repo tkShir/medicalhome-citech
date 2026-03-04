@@ -32,7 +32,7 @@ const STATUS_STYLES: Record<FacilityStatus, string> = {
   open: 'text-green-dark bg-green-light',
 }
 
-const SETUP_SQL = `-- 施設テーブル
+const SETUP_SQL = `-- 施設テーブル（新規作成の場合）
 CREATE TABLE IF NOT EXISTS facilities (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   facility_id TEXT UNIQUE,
@@ -49,6 +49,19 @@ CREATE TABLE IF NOT EXISTS facilities (
   recruit_url TEXT,
   status TEXT NOT NULL DEFAULT 'not_published'
     CHECK (status IN ('not_published', 'coming_soon', 'open')),
+  description TEXT,
+  details TEXT,
+  open_date TEXT,
+  last_updated TEXT,
+  director_name TEXT,
+  director_title TEXT,
+  director_message TEXT,
+  access_nearest_station TEXT,
+  access_walk_time TEXT,
+  access_bus TEXT,
+  access_parking TEXT,
+  access_note TEXT,
+  features JSONB,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -62,6 +75,26 @@ CREATE TABLE IF NOT EXISTS facility_images (
   sort_order INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );`
+
+const ALTER_SQL = `-- 既存テーブルにリッチコンテンツ列を追加（初回のみ実行）
+ALTER TABLE facilities
+  ADD COLUMN IF NOT EXISTS description TEXT,
+  ADD COLUMN IF NOT EXISTS details TEXT,
+  ADD COLUMN IF NOT EXISTS open_date TEXT,
+  ADD COLUMN IF NOT EXISTS last_updated TEXT,
+  ADD COLUMN IF NOT EXISTS director_name TEXT,
+  ADD COLUMN IF NOT EXISTS director_title TEXT,
+  ADD COLUMN IF NOT EXISTS director_message TEXT,
+  ADD COLUMN IF NOT EXISTS access_nearest_station TEXT,
+  ADD COLUMN IF NOT EXISTS access_walk_time TEXT,
+  ADD COLUMN IF NOT EXISTS access_bus TEXT,
+  ADD COLUMN IF NOT EXISTS access_parking TEXT,
+  ADD COLUMN IF NOT EXISTS access_note TEXT,
+  ADD COLUMN IF NOT EXISTS features JSONB;`
+
+const CSV_HEADERS = `施設名,住所,WEB表示住所,TEL ID,FAX,E-mail,ジョブメドレーURL,みんなの介護URL,GoogleMapsURL,自社採用,施設ID,Status,説明,詳細説明,オープン日,最終更新日,施設長名,施設長役職,施設長メッセージ,最寄り駅,徒歩時間,バスアクセス,駐車場,住所備考,施設の特徴`
+
+const FEATURES_EXAMPLE = `[{"icon":"🏥","title":"24時間看護体制","desc":"夜間を含む24時間、常駐の看護師が対応します。"},{"icon":"👨‍⚕️","title":"訪問診療との連携","desc":"定期的に訪問診療医が来訪します。"}]`
 
 export default function FacilitiesSection() {
   const [facilities, setFacilities] = useState<Facility[]>([])
@@ -464,25 +497,55 @@ export default function FacilitiesSection() {
 
       {/* Setup guide (collapsible) */}
       <div className="bg-white border border-lightgray p-6 md:p-8">
-        <h2 className="font-serif text-base text-green-deeper mb-1">初期セットアップ</h2>
+        <h2 className="font-serif text-base text-green-deeper mb-1">セットアップ / CSV フォーマット</h2>
         <div className="w-6 h-0.5 bg-green-main mb-4" />
-        <p className="font-sans text-xs text-darkgray/70 mb-4 leading-relaxed">
-          初めて使用する場合は、Supabase にテーブルと Storage バケットを作成してください。
-        </p>
+
+        {/* ALTER TABLE — for existing DB */}
+        <details className="group mb-4">
+          <summary className="font-sans text-xs text-green-dark hover:text-green-deeper cursor-pointer list-none flex items-center gap-1.5">
+            <svg className="w-3.5 h-3.5 group-open:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            既存テーブルへのカラム追加 SQL（リッチコンテンツ対応・初回のみ実行）
+          </summary>
+          <div className="mt-3">
+            <pre className="bg-offwhite border border-lightgray p-3 text-xs font-mono text-darkgray overflow-x-auto whitespace-pre">{ALTER_SQL}</pre>
+          </div>
+        </details>
+
+        {/* CSV format */}
+        <details className="group mb-4">
+          <summary className="font-sans text-xs text-green-dark hover:text-green-deeper cursor-pointer list-none flex items-center gap-1.5">
+            <svg className="w-3.5 h-3.5 group-open:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            CSV ヘッダー一覧（コピーしてスプレッドシートの1行目に貼り付け）
+          </summary>
+          <div className="mt-3 space-y-3">
+            <pre className="bg-offwhite border border-lightgray p-3 text-xs font-mono text-darkgray overflow-x-auto whitespace-pre">{CSV_HEADERS}</pre>
+            <div>
+              <p className="font-sans text-xs text-midgray mb-1">「施設の特徴」列のJSON形式例:</p>
+              <pre className="bg-offwhite border border-lightgray p-3 text-xs font-mono text-darkgray overflow-x-auto whitespace-pre">{FEATURES_EXAMPLE}</pre>
+              <p className="font-sans text-xs text-darkgray/50 mt-1.5 leading-relaxed">
+                icon: 絵文字、title: 特徴タイトル、desc: 説明文。配列形式で複数追加可。<br />
+                「施設長メッセージ」はセル内改行（Sheets: Alt+Enter）で段落分けできます。
+              </p>
+            </div>
+          </div>
+        </details>
+
+        {/* Initial setup SQL */}
         <details className="group">
           <summary className="font-sans text-xs text-green-dark hover:text-green-deeper cursor-pointer list-none flex items-center gap-1.5">
             <svg className="w-3.5 h-3.5 group-open:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            セットアップSQL・手順を表示
+            初回セットアップSQL（テーブル未作成の場合）
           </summary>
-          <div className="mt-4 space-y-4">
+          <div className="mt-3 space-y-3">
+            <pre className="bg-offwhite border border-lightgray p-3 text-xs font-mono text-darkgray overflow-x-auto whitespace-pre">{SETUP_SQL}</pre>
             <div>
-              <p className="font-sans text-xs text-midgray mb-2">① Supabase SQL Editor で実行:</p>
-              <pre className="bg-offwhite border border-lightgray p-3 text-xs font-mono text-darkgray overflow-x-auto whitespace-pre">{SETUP_SQL}</pre>
-            </div>
-            <div>
-              <p className="font-sans text-xs text-midgray mb-2">② Supabase Storage → New bucket で作成:</p>
+              <p className="font-sans text-xs text-midgray mb-1">Storage バケット作成:</p>
               <pre className="bg-offwhite border border-lightgray p-3 text-xs font-mono text-darkgray">{`バケット名: facility-images\nPublic: ✓ (公開設定)`}</pre>
             </div>
           </div>

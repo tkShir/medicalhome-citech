@@ -5,145 +5,18 @@ import Footer from '@/components/layout/Footer'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { cache } from 'react'
 
-// ===== DBに存在しないリッチコンテンツ（slug別） =====
-// CSVで管理できない情報はここで管理。DBに移行する際はこのオブジェクトを削除してください。
-const FACILITY_CONTENT: Record<string, {
-  description?: string
-  details?: string
-  openDate?: string
-  lastUpdated?: string
-  features?: { icon: string; title: string; desc: string }[]
-  director?: { name: string; title: string; message: string }
-  access?: {
-    nearestStation: string
-    walkTime?: string
-    bus?: string
-    parking?: string
-    note?: string
-  }
-}> = {
-  'abee-hodogaya': {
-    description: '在宅型有料老人ホーム。24時間体制の医療・介護サービスを提供するホスピス住宅です。訪問看護ステーション・訪問介護ステーションを併設し、その人らしい生活を包括的にサポートします。',
-    details: '終末期の医療的ケアが必要な方や、在宅ケアを希望される方が安心して過ごせる環境を整えています。訪問診療医と連携した24時間体制の看護・介護で、ご本人・ご家族を支えます。',
-    lastUpdated: '2026年1月19日',
-    features: [
-      {
-        icon: '🏥',
-        title: '24時間看護体制',
-        desc: '夜間を含む24時間、常駐の看護師が対応します。急変時も迅速にケアを提供できる体制を整えています。',
-      },
-      {
-        icon: '👨‍⚕️',
-        title: '訪問診療との連携',
-        desc: '定期的に訪問診療医が来訪し、医師との綿密な連携のもと医療処置・投薬管理を行います。',
-      },
-      {
-        icon: '🤝',
-        title: '訪問看護・介護ステーション併設',
-        desc: '同一建物内に訪問看護ステーションと訪問介護ステーションを併設。シームレスなケア提供が可能です。',
-      },
-      {
-        icon: '💚',
-        title: '看取り・ターミナルケア',
-        desc: '人生の最終章を穏やかに迎えられるよう、本人・ご家族のご意思を尊重した看取りケアを提供します。',
-      },
-      {
-        icon: '🍽️',
-        title: '食事・生活支援',
-        desc: 'その方の嗜好や食形態に合わせた食事提供のほか、入浴・排せつ介助など日常生活全般を支援します。',
-      },
-      {
-        icon: '🏃',
-        title: 'リハビリテーション',
-        desc: 'PT/OTによるリハビリを提供し、日常生活動作の維持・向上をサポートします。',
-      },
-    ],
-    director: {
-      name: '※ 施設長名をご記入ください',
-      title: '施設長',
-      message: 'ナーシングホームAbee保土ヶ谷では、「その人らしく」最期まで暮らし続けることのできる環境をつくることを使命と考えています。\n\n医療と介護の専門職が連携し、入居者様お一人おひとりのペースを大切にしながら、日々のケアに臨んでいます。ご本人やご家族の想いに寄り添い、安心してお任せいただける施設であり続けるよう、スタッフ一同努めてまいります。\n\n見学・入居のご相談はいつでも歓迎しております。どうぞお気軽にお声がけください。',
-    },
-    access: {
-      nearestStation: 'JR横須賀線・相鉄本線「保土ケ谷」駅',
-      walkTime: '徒歩約15分',
-      bus: '神奈川中央交通バス「坂本町」停留所 徒歩約3分',
-      parking: 'お車でお越しの場合は事前にお問い合わせください',
-      note: '〒240-0023 神奈川県横浜市保土ヶ谷区坂本町106-1',
-    },
-  },
-  'ciz-fujisawahonmachi': {
-    description: '藤沢市に新規開設予定のホスピス住宅です。地域の医療・介護ニーズに応え、その人らしい暮らしをサポートします。',
-    details: '2026年6月のオープンに向け、準備を進めています。開設後は訪問看護ステーション・訪問介護ステーションを併設し、包括的なケアを提供予定です。',
-    openDate: '2026年6月オープン予定',
-    features: [
-      {
-        icon: '🏥',
-        title: '24時間看護体制（予定）',
-        desc: '開設後は夜間を含む24時間の看護体制を整備予定。安心して暮らせる環境を用意します。',
-      },
-      {
-        icon: '👨‍⚕️',
-        title: '訪問診療連携（予定）',
-        desc: '地域の訪問診療医との連携体制を構築し、医療依存度の高い方でも安心して入居いただける環境を整えます。',
-      },
-      {
-        icon: '🤝',
-        title: '訪問看護・介護ステーション併設（予定）',
-        desc: '開設時より訪問看護ステーション・訪問介護ステーションを併設し、一体的なケアを提供予定です。',
-      },
-      {
-        icon: '💚',
-        title: '看取りケア（予定）',
-        desc: '人生の最終章を穏やかに過ごせるよう、本人・ご家族の意思を尊重した看取りケアを提供予定です。',
-      },
-    ],
-    access: {
-      nearestStation: '小田急江ノ島線「藤沢本町」駅',
-      walkTime: '詳細は開設時にお知らせします',
-      note: '神奈川県藤沢市花の木（詳細住所は開設時に公開予定）',
-    },
-  },
-  'ciz-kawasakishiratori': {
-    description: '川崎市麻生区に開設予定のホスピス住宅です。地域に根ざした医療・介護サービスを提供します。',
-    details: '2026年秋頃のオープンに向け、準備を進めています。詳細は随時お知らせいたします。',
-    openDate: '2026年秋頃オープン予定',
-    features: [
-      {
-        icon: '🏥',
-        title: '24時間看護体制（予定）',
-        desc: '開設後は夜間を含む24時間の看護体制を整備予定。安心の医療・介護環境を構築します。',
-      },
-      {
-        icon: '👨‍⚕️',
-        title: '訪問診療連携（予定）',
-        desc: '地域の医療機関・訪問診療医との連携のもと、医療ニーズの高い方の入居に対応する体制を整えます。',
-      },
-      {
-        icon: '🤝',
-        title: '訪問看護・介護ステーション併設（予定）',
-        desc: '訪問看護・訪問介護ステーションを開設時より併設し、連携したケアを提供予定です。',
-      },
-      {
-        icon: '💚',
-        title: '看取りケア（予定）',
-        desc: '川崎エリアで安心した看取り・ターミナルケアを提供できる環境を整備します。',
-      },
-    ],
-    access: {
-      nearestStation: '小田急多摩線「白鳥」駅付近（詳細は開設時にお知らせ）',
-      note: '神奈川県川崎市麻生区（詳細住所は開設時に公開予定）',
-    },
-  },
-}
-
-// ==========================================
-
 export const dynamic = 'force-dynamic'
 
 interface FacilityImage {
   id: string
   url: string
   sort_order: number
+}
+
+interface Feature {
+  icon: string
+  title: string
+  desc: string
 }
 
 interface FacilityRow {
@@ -156,6 +29,19 @@ interface FacilityRow {
   job_medley_url: string | null
   minnano_kaigo_url: string | null
   recruit_url: string | null
+  description: string | null
+  details: string | null
+  open_date: string | null
+  last_updated: string | null
+  director_name: string | null
+  director_title: string | null
+  director_message: string | null
+  access_nearest_station: string | null
+  access_walk_time: string | null
+  access_bus: string | null
+  access_parking: string | null
+  access_note: string | null
+  features: Feature[] | null
   facility_images: FacilityImage[]
 }
 
@@ -163,7 +49,15 @@ const getFacility = cache(async (slug: string): Promise<FacilityRow | null> => {
   const supabase = createServerSupabaseClient()
   const { data, error } = await supabase
     .from('facilities')
-    .select('id, name, slug, web_address, status, google_maps_url, job_medley_url, minnano_kaigo_url, recruit_url, facility_images(id, url, sort_order)')
+    .select(`
+      id, name, slug, web_address, status,
+      google_maps_url, job_medley_url, minnano_kaigo_url, recruit_url,
+      description, details, open_date, last_updated,
+      director_name, director_title, director_message,
+      access_nearest_station, access_walk_time, access_bus, access_parking, access_note,
+      features,
+      facility_images(id, url, sort_order)
+    `)
     .eq('slug', slug)
     .single()
 
@@ -174,10 +68,9 @@ const getFacility = cache(async (slug: string): Promise<FacilityRow | null> => {
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const facility = await getFacility(params.slug)
   if (!facility || facility.status === 'not_published') return { title: '施設が見つかりません' }
-  const content = FACILITY_CONTENT[params.slug]
   return {
     title: facility.name,
-    description: content?.description ?? facility.name,
+    description: facility.description ?? facility.name,
   }
 }
 
@@ -197,9 +90,11 @@ export default async function FacilityDetailPage({ params }: { params: { slug: s
 
   if (!facility || facility.status === 'not_published') notFound()
 
-  const content = FACILITY_CONTENT[facility.slug] ?? {}
   const images = [...facility.facility_images].sort((a, b) => a.sort_order - b.sort_order)
 
+  const hasAbout = facility.description || facility.details
+  const hasAccess = facility.access_nearest_station
+  const hasDirector = facility.director_name && facility.director_message
   const hasLinks = facility.google_maps_url || facility.job_medley_url || facility.minnano_kaigo_url || facility.recruit_url
 
   return (
@@ -230,10 +125,10 @@ export default async function FacilityDetailPage({ params }: { params: { slug: s
                 {facility.web_address}
               </p>
             )}
-            {content.openDate && (
+            {facility.open_date && (
               <div className="mt-4">
                 <span className="font-sans text-xs text-green-deeper bg-green-main px-3 py-1 tracking-wider">
-                  {content.openDate}
+                  {facility.open_date}
                 </span>
               </div>
             )}
@@ -293,25 +188,27 @@ export default async function FacilityDetailPage({ params }: { params: { slug: s
                 )}
 
                 {/* About */}
-                {content.description && (
+                {hasAbout && (
                   <div className="bg-white border border-lightgray p-6 md:p-8">
                     <h2 className="font-serif text-lg font-semibold text-green-deeper mb-1">施設について</h2>
                     <div className="w-8 h-0.5 bg-green-main mb-5" />
-                    <p className="font-sans text-sm text-darkgray leading-[1.9] mb-4">{content.description}</p>
-                    {content.details && (
-                      <p className="font-sans text-sm text-darkgray/70 leading-[1.9]">{content.details}</p>
+                    {facility.description && (
+                      <p className="font-sans text-sm text-darkgray leading-[1.9] mb-4">{facility.description}</p>
+                    )}
+                    {facility.details && (
+                      <p className="font-sans text-sm text-darkgray/70 leading-[1.9]">{facility.details}</p>
                     )}
                   </div>
                 )}
 
                 {/* Features */}
-                {content.features && content.features.length > 0 && (
+                {facility.features && facility.features.length > 0 && (
                   <div className="bg-white border border-lightgray p-6 md:p-8">
                     <h2 className="font-serif text-lg font-semibold text-green-deeper mb-1">施設の特徴</h2>
                     <div className="w-8 h-0.5 bg-green-main mb-5" />
                     <div className="grid sm:grid-cols-2 gap-5">
-                      {content.features.map((feature) => (
-                        <div key={feature.title} className="flex gap-4">
+                      {facility.features.map((feature, i) => (
+                        <div key={i} className="flex gap-4">
                           <div className="w-10 h-10 bg-green-light flex items-center justify-center flex-shrink-0 text-lg">
                             {feature.icon}
                           </div>
@@ -346,7 +243,7 @@ export default async function FacilityDetailPage({ params }: { params: { slug: s
                 )}
 
                 {/* Director message */}
-                {content.director && (
+                {hasDirector && (
                   <div className="bg-white border border-lightgray p-6 md:p-8">
                     <h2 className="font-serif text-lg font-semibold text-green-deeper mb-1">施設長からのメッセージ</h2>
                     <div className="w-8 h-0.5 bg-green-main mb-5" />
@@ -357,10 +254,14 @@ export default async function FacilityDetailPage({ params }: { params: { slug: s
                         </svg>
                       </div>
                       <div className="flex-1">
-                        <p className="font-sans text-xs text-midgray tracking-wide mb-0.5">{content.director.title}</p>
-                        <p className="font-serif text-base font-semibold text-green-deeper mb-4">{content.director.name}</p>
+                        <p className="font-sans text-xs text-midgray tracking-wide mb-0.5">
+                          {facility.director_title ?? '施設長'}
+                        </p>
+                        <p className="font-serif text-base font-semibold text-green-deeper mb-4">
+                          {facility.director_name}
+                        </p>
                         <div className="space-y-3">
-                          {content.director.message.split('\n\n').map((para, i) => (
+                          {facility.director_message!.split(/\n\n|\n/).filter(Boolean).map((para, i) => (
                             <p key={i} className="font-sans text-sm text-darkgray leading-[1.9]">{para}</p>
                           ))}
                         </div>
@@ -370,7 +271,7 @@ export default async function FacilityDetailPage({ params }: { params: { slug: s
                 )}
 
                 {/* Access info */}
-                {content.access && (
+                {hasAccess && (
                   <div className="bg-white border border-lightgray p-6 md:p-8">
                     <h2 className="font-serif text-lg font-semibold text-green-deeper mb-1">アクセス情報</h2>
                     <div className="w-8 h-0.5 bg-green-main mb-5" />
@@ -397,32 +298,34 @@ export default async function FacilityDetailPage({ params }: { params: { slug: s
                     </div>
 
                     <dl className="space-y-3">
-                      <div className="flex gap-3">
-                        <dt className="font-sans text-xs text-midgray w-20 flex-shrink-0 pt-0.5 tracking-wide">最寄り駅</dt>
-                        <dd className="font-sans text-sm text-darkgray leading-relaxed">{content.access.nearestStation}</dd>
-                      </div>
-                      {content.access.walkTime && (
+                      {facility.access_nearest_station && (
+                        <div className="flex gap-3">
+                          <dt className="font-sans text-xs text-midgray w-20 flex-shrink-0 pt-0.5 tracking-wide">最寄り駅</dt>
+                          <dd className="font-sans text-sm text-darkgray leading-relaxed">{facility.access_nearest_station}</dd>
+                        </div>
+                      )}
+                      {facility.access_walk_time && (
                         <div className="flex gap-3">
                           <dt className="font-sans text-xs text-midgray w-20 flex-shrink-0 pt-0.5 tracking-wide">徒歩</dt>
-                          <dd className="font-sans text-sm text-darkgray">{content.access.walkTime}</dd>
+                          <dd className="font-sans text-sm text-darkgray">{facility.access_walk_time}</dd>
                         </div>
                       )}
-                      {content.access.bus && (
+                      {facility.access_bus && (
                         <div className="flex gap-3">
                           <dt className="font-sans text-xs text-midgray w-20 flex-shrink-0 pt-0.5 tracking-wide">バス</dt>
-                          <dd className="font-sans text-sm text-darkgray">{content.access.bus}</dd>
+                          <dd className="font-sans text-sm text-darkgray">{facility.access_bus}</dd>
                         </div>
                       )}
-                      {content.access.parking && (
+                      {facility.access_parking && (
                         <div className="flex gap-3">
                           <dt className="font-sans text-xs text-midgray w-20 flex-shrink-0 pt-0.5 tracking-wide">駐車場</dt>
-                          <dd className="font-sans text-sm text-darkgray">{content.access.parking}</dd>
+                          <dd className="font-sans text-sm text-darkgray">{facility.access_parking}</dd>
                         </div>
                       )}
-                      {content.access.note && (
+                      {facility.access_note && (
                         <div className="flex gap-3">
                           <dt className="font-sans text-xs text-midgray w-20 flex-shrink-0 pt-0.5 tracking-wide">住所</dt>
-                          <dd className="font-sans text-sm text-darkgray">{content.access.note}</dd>
+                          <dd className="font-sans text-sm text-darkgray">{facility.access_note}</dd>
                         </div>
                       )}
                     </dl>
@@ -508,9 +411,9 @@ export default async function FacilityDetailPage({ params }: { params: { slug: s
                         </Link>
                       )}
                     </div>
-                    {content.lastUpdated && (
+                    {facility.last_updated && (
                       <p className="font-sans text-xs text-midgray mt-5 pt-4 border-t border-lightgray tracking-wide">
-                        最終更新：{content.lastUpdated}
+                        最終更新：{facility.last_updated}
                       </p>
                     )}
                   </div>
