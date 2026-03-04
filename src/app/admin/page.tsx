@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation'
 import ContactSection from './_components/ContactSection'
 import RecruitSection from './_components/RecruitSection'
 import SettingsSection from './_components/SettingsSection'
+import FacilitiesSection from './_components/FacilitiesSection'
 
-type Tab = 'jobs' | 'contact' | 'recruit' | 'settings'
+type Tab = 'jobs' | 'facilities' | 'contact' | 'recruit' | 'settings'
 
 interface Job {
   id: string
@@ -104,6 +105,7 @@ export default function AdminPage() {
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'jobs', label: '求人管理' },
+    { id: 'facilities', label: '施設管理' },
     { id: 'contact', label: 'お問い合わせ' },
     { id: 'recruit', label: '採用応募' },
     { id: 'settings', label: '設定' },
@@ -271,6 +273,7 @@ export default function AdminPage() {
         </div>
       )}
 
+      {activeTab === 'facilities' && <FacilitiesSection />}
       {activeTab === 'contact' && <ContactSection />}
       {activeTab === 'recruit' && <RecruitSection />}
       {activeTab === 'settings' && <SettingsSection />}
