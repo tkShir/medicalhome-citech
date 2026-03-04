@@ -49,6 +49,9 @@ function parseDisclosureOffices(raw: string): { name: string; url?: string }[] |
   }).filter(item => item.name)
   return items.length > 0 ? items : null
 }
+
+// 「サービス」列のパイプ区切り文字列をパース
+function parseServices(raw: string): string[] | null {
   const trimmed = raw?.trim()
   if (!trimmed) return null
   const items = trimmed.split('|').map(s => s.trim()).filter(Boolean)
