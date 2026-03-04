@@ -41,7 +41,12 @@ function getServiceRoleKey(): string {
  * API Routes と Server Components で使用
  */
 export function createServerSupabaseClient() {
-  return createClient(getSupabaseUrl(), getServiceRoleKey())
+  return createClient(getSupabaseUrl(), getServiceRoleKey(), {
+    global: {
+      fetch: (url, options = {}) =>
+        fetch(url, { ...options, cache: 'no-store' }),
+    },
+  })
 }
 
 /**
