@@ -78,6 +78,7 @@ function csvRowToFacility(row: Record<string, string>) {
     access_walk_time: str(row['徒歩時間']),
     access_bus: str(row['バスアクセス']),
     access_parking: str(row['駐車場']),
+    document_url: str(row['重要事項説明書URL']),
     services: parseServices(row['サービス'] || ''),
     features: parseFeatures(row['施設の特徴'] || ''),
     updated_at: new Date().toISOString(),

@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS facilities (
   access_walk_time TEXT,
   access_bus TEXT,
   access_parking TEXT,
+  document_url TEXT,
   services JSONB,
   features JSONB,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -89,10 +90,11 @@ ALTER TABLE facilities
   ADD COLUMN IF NOT EXISTS access_walk_time TEXT,
   ADD COLUMN IF NOT EXISTS access_bus TEXT,
   ADD COLUMN IF NOT EXISTS access_parking TEXT,
+  ADD COLUMN IF NOT EXISTS document_url TEXT,
   ADD COLUMN IF NOT EXISTS services JSONB,
   ADD COLUMN IF NOT EXISTS features JSONB;`
 
-const CSV_HEADERS = `施設名,住所,WEB表示住所,TEL ID,FAX,E-mail,ジョブメドレーURL,みんなの介護URL,GoogleMapsURL,自社採用,施設ID,Status,説明,詳細説明,オープン日,最終更新日,施設長名,施設長役職,施設長メッセージ,最寄り駅,徒歩時間,バスアクセス,駐車場,サービス,施設の特徴`
+const CSV_HEADERS = `施設名,住所,WEB表示住所,TEL ID,FAX,E-mail,ジョブメドレーURL,みんなの介護URL,GoogleMapsURL,自社採用,施設ID,Status,説明,詳細説明,オープン日,最終更新日,施設長名,施設長役職,施設長メッセージ,最寄り駅,徒歩時間,バスアクセス,駐車場,重要事項説明書URL,サービス,施設の特徴`
 
 const FEATURES_EXAMPLE = `[{"icon":"🏥","title":"24時間看護体制","desc":"夜間を含む24時間、常駐の看護師が対応します。"},{"icon":"👨‍⚕️","title":"訪問診療との連携","desc":"定期的に訪問診療医が来訪します。"}]`
 

@@ -29,6 +29,7 @@ interface FacilityRow {
   job_medley_url: string | null
   minnano_kaigo_url: string | null
   recruit_url: string | null
+  document_url: string | null
   description: string | null
   details: string | null
   open_date: string | null
@@ -51,7 +52,7 @@ const getFacility = cache(async (slug: string): Promise<FacilityRow | null> => {
     .from('facilities')
     .select(`
       id, name, slug, web_address, status,
-      google_maps_url, job_medley_url, minnano_kaigo_url, recruit_url,
+      google_maps_url, job_medley_url, minnano_kaigo_url, recruit_url, document_url,
       description, details, open_date, last_updated,
       director_name, director_title, director_message,
       access_nearest_station, access_walk_time, access_bus, access_parking,
@@ -84,7 +85,7 @@ export default async function FacilityDetailPage({ params }: { params: { slug: s
   const hasAbout = facility.description || facility.details
   const hasAccess = facility.access_nearest_station
   const hasDirector = facility.director_name && facility.director_message
-  const hasLinks = facility.google_maps_url || facility.job_medley_url || facility.minnano_kaigo_url || facility.recruit_url
+  const hasLinks = facility.google_maps_url || facility.job_medley_url || facility.minnano_kaigo_url || facility.recruit_url || facility.document_url
 
   return (
     <>
@@ -398,6 +399,19 @@ export default async function FacilityDetailPage({ params }: { params: { slug: s
                           </svg>
                           採用情報はこちら
                         </Link>
+                      )}
+                      {facility.document_url && (
+                        <a
+                          href={facility.document_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 font-sans text-sm text-green-dark hover:text-green-deeper transition-colors tracking-wide"
+                        >
+                          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          重要事項説明書
+                        </a>
                       )}
                     </div>
                     {facility.last_updated && (

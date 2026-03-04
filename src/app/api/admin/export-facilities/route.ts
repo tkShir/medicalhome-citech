@@ -8,7 +8,7 @@ const HEADERS = [
   '説明', '詳細説明', 'オープン日', '最終更新日',
   '施設長名', '施設長役職', '施設長メッセージ',
   '最寄り駅', '徒歩時間', 'バスアクセス', '駐車場',
-  'サービス', '施設の特徴',
+  '重要事項説明書URL', 'サービス', '施設の特徴',
 ]
 
 function normalizeStatusForExport(status: string): string {
@@ -34,7 +34,7 @@ export async function GET() {
       .from('facilities')
       .select(`
         facility_id, name, address, web_address, tel, fax, email,
-        job_medley_url, minnano_kaigo_url, google_maps_url, recruit_url, status,
+        job_medley_url, minnano_kaigo_url, google_maps_url, recruit_url, document_url, status,
         description, details, open_date, last_updated,
         director_name, director_title, director_message,
         access_nearest_station, access_walk_time, access_bus, access_parking,
@@ -68,6 +68,7 @@ export async function GET() {
       cell(f.access_walk_time),
       cell(f.access_bus),
       cell(f.access_parking),
+      cell(f.document_url),
       // サービス: パイプ区切り（インポートと同じ形式）
       cell(Array.isArray(f.services) ? f.services.join('|') : null),
       // 施設の特徴: JSON（インポートと同じ形式）
