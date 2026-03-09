@@ -6,8 +6,9 @@ import ContactSection from './_components/ContactSection'
 import RecruitSection from './_components/RecruitSection'
 import SettingsSection from './_components/SettingsSection'
 import FacilitiesSection from './_components/FacilitiesSection'
+import NewsSection from './_components/NewsSection'
 
-type Tab = 'jobs' | 'facilities' | 'contact' | 'recruit' | 'settings'
+type Tab = 'jobs' | 'facilities' | 'news' | 'contact' | 'recruit' | 'settings'
 
 interface Job {
   id: string
@@ -106,6 +107,7 @@ export default function AdminPage() {
   const tabs: { id: Tab; label: string }[] = [
     { id: 'jobs', label: '求人管理' },
     { id: 'facilities', label: '施設管理' },
+    { id: 'news', label: 'お知らせ' },
     { id: 'contact', label: 'お問い合わせ' },
     { id: 'recruit', label: '採用応募' },
     { id: 'settings', label: '設定' },
@@ -274,6 +276,7 @@ export default function AdminPage() {
       )}
 
       {activeTab === 'facilities' && <FacilitiesSection />}
+      {activeTab === 'news' && <NewsSection />}
       {activeTab === 'contact' && <ContactSection />}
       {activeTab === 'recruit' && <RecruitSection />}
       {activeTab === 'settings' && <SettingsSection />}

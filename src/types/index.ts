@@ -55,12 +55,14 @@ export interface JobListing {
 export interface NewsPost {
   id: string
   title: string
+  slug: string
   excerpt: string
   content: string
-  publishedAt: string
   category: string
-  imageUrl?: string
-  slug: string
+  is_published: boolean
+  published_at: string | null
+  created_at: string
+  updated_at: string
 }
 
 export interface ContactFormData {
