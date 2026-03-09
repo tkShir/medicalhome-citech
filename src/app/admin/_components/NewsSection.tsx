@@ -290,6 +290,7 @@ export default function NewsSection() {
   const [publishedAt, setPublishedAt] = useState('')
   const [savedPostId, setSavedPostId] = useState<string | undefined>(undefined)
   const [editorKey, setEditorKey] = useState(0)
+  const [setupOpen, setSetupOpen] = useState(false)
 
   async function loadPosts() {
     setLoading(true)
@@ -588,15 +589,32 @@ export default function NewsSection() {
           )}
         </div>
 
-        {/* Setup instructions */}
-        <div className="bg-white border border-lightgray p-6 md:p-8">
-          <h2 className="font-serif text-base text-green-deeper mb-1">初回セットアップ</h2>
-          <div className="w-6 h-0.5 bg-green-main mb-4" />
-          <p className="font-sans text-xs text-darkgray/70 mb-4 leading-relaxed">
-            初回利用時は Supabase の SQL Editor で以下の SQL を実行し、Storage に{' '}
-            <strong>news-assets</strong>（パブリック）バケットを作成してください。
-          </p>
-          <pre className="bg-offwhite p-4 text-xs font-mono text-darkgray/80 overflow-x-auto whitespace-pre leading-relaxed rounded">
+        {/* Setup instructions (collapsible) */}
+        <div className="bg-white border border-lightgray">
+          <button
+            type="button"
+            onClick={() => setSetupOpen((v) => !v)}
+            className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-offwhite/60 transition-colors"
+          >
+            <span className="font-serif text-base text-green-deeper">初回セットアップ</span>
+            <svg
+              className={`w-4 h-4 text-midgray flex-shrink-0 transition-transform duration-200 ${setupOpen ? 'rotate-180' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {setupOpen && (
+            <div className="px-6 pb-6 border-t border-lightgray">
+              <div className="w-6 h-0.5 bg-green-main mt-4 mb-4" />
+              <p className="font-sans text-xs text-darkgray/70 mb-4 leading-relaxed">
+                初回利用時は Supabase の SQL Editor で以下の SQL を実行し、Storage に{' '}
+                <strong>news-assets</strong>（パブリック）バケットを作成してください。
+              </p>
+              <pre className="bg-offwhite p-4 text-xs font-mono text-darkgray/80 overflow-x-auto whitespace-pre leading-relaxed rounded">
 {`-- 1. news_posts テーブル
 CREATE TABLE IF NOT EXISTS news_posts (
   id           UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -635,7 +653,9 @@ CREATE TRIGGER update_news_posts_updated_at
 
 -- 4. Storage: Dashboard > Storage > New bucket
 --    名前: news-assets  /  Public bucket: ON`}
-          </pre>
+              </pre>
+            </div>
+          )}
         </div>
       </div>
     )
