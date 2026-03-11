@@ -1,23 +1,34 @@
 import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 export const metadata = {
   title: 'お知らせ',
   description: 'シーズメディカルホームからのお知らせ・ニュースリリース。',
 }
 
-const posts = [
-  {
-    slug: 'website-launch',
-    title: 'シーズメディカルホーム　ウェブサイト開設のお知らせ',
-    excerpt: '2025年11月1日付けでシーズメディカルホームのウェブサイトを開設したことをお知らせします。',
-    publishedAt: '2025.11.01',
-    category: 'お知らせ',
-  },
-]
+async function getPosts() {
+  try {
+    const supabase = createServerSupabaseClient()
+    const { data, error } = await supabase
+      .from('news_posts')
+      .select('id, title, slug, excerpt, category, published_at')
+      .eq('is_published', true)
+      .not('published_at', 'is', null)
+      .lte('published_at', new Date().toISOString())
+      .order('published_at', { ascending: false })
 
-export default function NewsPage() {
+    if (error) return []
+    return data || []
+  } catch {
+    return []
+  }
+}
+
+export default async function NewsPage() {
+  const posts = await getPosts()
+
   return (
     <>
       <Header />
@@ -36,12 +47,19 @@ export default function NewsPage() {
 
             <div className="border-t border-lightgray">
               {posts.map((post) => (
-                <article
+                <Link
                   key={post.slug}
+                  href={`/news/${post.slug}`}
                   className="flex flex-col sm:flex-row sm:items-start gap-4 py-6 border-b border-lightgray hover:bg-white transition-colors px-2 group"
                 >
                   <time className="font-sans text-xs text-midgray tracking-wider flex-shrink-0 pt-0.5">
-                    {post.publishedAt}
+                    {post.published_at
+                      ? new Date(post.published_at).toLocaleDateString('ja-JP', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                        }).replace(/\//g, '.')
+                      : ''}
                   </time>
                   <span className="font-sans text-[10px] tracking-widest text-green-dark bg-green-light px-2 py-0.5 flex-shrink-0 self-start">
                     {post.category}
@@ -50,9 +68,11 @@ export default function NewsPage() {
                     <h2 className="font-sans text-sm font-medium text-darkgray group-hover:text-green-dark transition-colors leading-relaxed mb-1">
                       {post.title}
                     </h2>
-                    <p className="font-sans text-xs text-midgray leading-relaxed">{post.excerpt}</p>
+                    {post.excerpt && (
+                      <p className="font-sans text-xs text-midgray leading-relaxed">{post.excerpt}</p>
+                    )}
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
 
