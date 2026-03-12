@@ -113,9 +113,11 @@ function buildEmailHtml(title: string, rows: { label: string; value: string }[])
 export interface ContactNotificationData {
   firstName: string
   lastName: string
+  contactPerson?: string
+  phone?: string
   email: string
   company?: string
-  jobTitle?: string
+  inquiryTypes?: string
   message: string
 }
 
@@ -133,10 +135,12 @@ export async function sendContactNotification(
   const name = `${data.lastName}${data.firstName}`
   const rows: { label: string; value: string }[] = [
     { label: 'お名前', value: name },
-    { label: 'メール', value: data.email },
   ]
+  if (data.contactPerson) rows.push({ label: '担当者名', value: data.contactPerson })
+  if (data.phone) rows.push({ label: '電話番号', value: data.phone })
+  rows.push({ label: 'メール', value: data.email })
+  if (data.inquiryTypes) rows.push({ label: 'お問い合わせ種別', value: data.inquiryTypes })
   if (data.company) rows.push({ label: '会社名', value: data.company })
-  if (data.jobTitle) rows.push({ label: '役職', value: data.jobTitle })
   rows.push({ label: 'メッセージ', value: data.message })
 
   try {

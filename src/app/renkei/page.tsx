@@ -5,18 +5,46 @@ import Footer from '@/components/layout/Footer'
 
 export const metadata: Metadata = {
   title: '医療機関・ご紹介の方へ',
-  description: '退院支援・地域連携室のご担当者様へ。胃ろう・気管切開・人工呼吸器など高医療依存の方の退院後施設をお探しでしたら、シーズメディカルホームへ。別表第7・第8対応。横浜・藤沢・川崎。',
+  description: '退院支援・地域連携室のご担当者様へ。胃ろう・気管切開・人工呼吸器など高医療依存の方の退院後施設をお探しでしたら、シーズメディカルホームへ。別表第7・第8対応。横浜市保土ヶ谷区・藤沢市・川崎市・日野市。',
 }
 
 const acceptableConditions = [
-  { label: '胃ろう管理', desc: '経管栄養の管理・実施に対応します。' },
+  { label: 'ターミナルケア', desc: '末期がん・神経難病など、終末期を迎える方の看取りに対応します。' },
+  { label: '胃ろう・腸ろう管理', desc: '胃ろう・腸ろうによる経管栄養の管理・実施に対応します。' },
   { label: '経管栄養（経鼻）', desc: '経鼻チューブによる栄養管理が可能です。' },
   { label: '気管切開', desc: '気管切開された方の受け入れ・ケアに対応します。' },
-  { label: '人工呼吸器', desc: '人工呼吸器管理が必要な方もご相談ください。' },
+  { label: '人工呼吸器（IPPV・NPPV）', desc: '侵襲的・非侵襲的人工呼吸器管理が必要な方もご相談ください。' },
   { label: '点滴・CV管理', desc: '中心静脈カテーテルや末梢点滴の管理に対応します。' },
   { label: '疼痛管理（麻薬含む）', desc: '訪問診療医と連携した疼痛コントロールを行います。' },
   { label: '褥瘡処置', desc: '専門的な褥瘡ケアに対応します。' },
-  { label: '別表第7・第8対応', desc: '医療保険による訪問看護が適用される方の受け入れが可能です。' },
+]
+
+const bekihyo7 = [
+  '末期の悪性腫瘍', '多発性硬化症', '重症筋無力症', 'スモン',
+  '筋萎縮性側索硬化症', '脊髄小脳変性症', 'ハンチントン病', '進行性筋ジストロフィー症',
+  'パーキンソン病関連疾患', '多系統萎縮症', 'プリオン病', '亜急性硬化性全脳炎',
+  'ライソゾーム病', '副腎白質ジストロフィー', '脊髄性筋萎縮症', '球脊髄性筋萎縮症',
+  '慢性炎症性脱髄性多発神経炎', '後天性免疫不全症候群', '頸髄損傷', '人工呼吸器を使用している状態',
+]
+
+const bekihyo8 = [
+  '在宅悪性腫瘍等患者指導管理（ターミナルケア）',
+  '在宅気管切開患者指導管理を受けている状態',
+  '気管カニューレを使用している状態',
+  '留置カテーテルを使用している状態',
+  '在宅自己腹膜灌流指導管理を受けている状態',
+  '在宅血液透析指導管理を受けている状態',
+  '在宅酸素療法指導管理を受けている状態',
+  '在宅中心静脈栄養法指導管理を受けている状態',
+  '在宅成分栄養経管栄養法指導管理を受けている状態',
+  '在宅自己導尿指導管理を受けている状態',
+  '在宅人工呼吸指導管理を受けている状態',
+  '在宅持続陽圧呼吸療法指導管理を受けている状態（CPAP含む）',
+  '在宅自己疼痛管理または在宅肺高血圧症患者指導管理を受けている状態',
+  '在宅植込み型補助人工心臓（非拍動流型）指導管理を受けている状態',
+  '人工肛門または人工膀胱を設置している状態',
+  '真皮を超える褥瘡の状態',
+  '在宅患者訪問点滴注射管理指導料を算定している状態',
 ]
 
 const medicalSupport = [
@@ -88,7 +116,10 @@ export default function RenkeiPage() {
                 <div className="divider-green" />
                 <div className="space-y-4 font-sans text-sm text-darkgray leading-[1.9]">
                   <p>
-                    退院支援・地域連携室のご担当者様へ。シーズメディカルホームは、医療依存度の高い方や終末期の方が退院後も安心して暮らせる医療特化型介護施設です。
+                    退院支援・地域連携室のご担当者様へ。シーズメディカルホームは、神奈川県・東京都を中心に医療依存度の高い方や終末期の方が退院後も安心して暮らせる医療特化型介護施設です。
+                  </p>
+                  <p>
+                    現在、神奈川県横浜市・藤沢市・川崎市や東京都日野市に拠点があります（一部開設予定）。
                   </p>
                   <p>
                     24時間看護体制と訪問診療医との密な連携により、胃ろう・気管切開・人工呼吸器管理など高度な医療ケアが必要な方の受け入れが可能です。「退院先が見つからない」「医療依存度が高くて施設を断られた」という方のご相談をお待ちしています。
@@ -108,12 +139,13 @@ export default function RenkeiPage() {
                     { label: '訪問診療', value: '複数クリニックと連携' },
                     { label: '訪問看護', value: '施設内訪問看護ステーション併設' },
                     { label: '訪問介護', value: '施設内訪問介護ステーション併設' },
-                    { label: 'エリア', value: '横浜・藤沢・川崎（神奈川県）' },
+                    { label: '面会時間', value: '24時間対応（家としてのコンセプト）' },
+                    { label: 'エリア', value: '横浜市・藤沢市・川崎市（神奈川県）\n日野市（東京都）' },
                     { label: '受付時間', value: '平日 10:00 – 19:00' },
                   ].map((item) => (
                     <div key={item.label} className="flex gap-4 py-3.5">
                       <span className="font-sans text-xs text-midgray w-24 flex-shrink-0 pt-0.5">{item.label}</span>
-                      <span className="font-sans text-sm text-darkgray font-medium leading-snug">{item.value}</span>
+                      <span className="font-sans text-sm text-darkgray font-medium leading-snug whitespace-pre-line">{item.value}</span>
                     </div>
                   ))}
                 </div>
@@ -134,8 +166,8 @@ export default function RenkeiPage() {
                 受け入れ可否は対象者様の状態を確認したうえで個別に判断いたします。
               </p>
             </div>
-            {/* gap-px + bg-lightgray でシームレスなグリッド境界線を実現 */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-lightgray border border-lightgray">
+            {/* 主な対応ケア */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-lightgray border border-lightgray mb-12">
               {acceptableConditions.map((item) => (
                 <div key={item.label} className="p-6 bg-white">
                   <div className="flex items-center gap-2 mb-3">
@@ -145,6 +177,43 @@ export default function RenkeiPage() {
                   <p className="font-sans text-xs text-darkgray/80 leading-relaxed">{item.desc}</p>
                 </div>
               ))}
+            </div>
+
+            {/* 別表7 */}
+            <div className="mb-8">
+              <h3 className="font-serif text-base font-semibold text-green-deeper mb-1">
+                別表第7 ― 厚生労働大臣が定める疾病等（医療保険による訪問看護が適用）
+              </h3>
+              <div className="w-8 h-0.5 bg-green-main mb-4" />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {bekihyo7.map((d) => (
+                  <div
+                    key={d}
+                    className="bg-green-light border border-green-pale font-sans text-xs text-green-deeper text-center px-3 py-2 tracking-wide"
+                  >
+                    {d}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 別表8 */}
+            <div>
+              <h3 className="font-serif text-base font-semibold text-green-deeper mb-1">
+                別表第8 ― 厚生労働大臣が定める状態等（医療保険による訪問看護が適用）
+              </h3>
+              <div className="w-8 h-0.5 bg-green-main mb-4" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                {bekihyo8.map((d) => (
+                  <div
+                    key={d}
+                    className="bg-offwhite border border-lightgray font-sans text-xs text-darkgray px-4 py-2.5 tracking-wide flex items-center gap-2"
+                  >
+                    <span className="w-1.5 h-1.5 bg-green-main flex-shrink-0" />
+                    {d}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>

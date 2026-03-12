@@ -15,6 +15,26 @@ const diseases = [
   '慢性炎症性脱髄性多発神経炎', '後天性免疫不全症候群', '頸髄損傷', '人工呼吸器を使用している状態',
 ]
 
+const conditions8 = [
+  '在宅悪性腫瘍等患者指導管理（ターミナルケア）',
+  '在宅気管切開患者指導管理を受けている状態',
+  '気管カニューレを使用している状態',
+  '留置カテーテルを使用している状態',
+  '在宅自己腹膜灌流指導管理を受けている状態',
+  '在宅血液透析指導管理を受けている状態',
+  '在宅酸素療法指導管理を受けている状態',
+  '在宅中心静脈栄養法指導管理を受けている状態',
+  '在宅成分栄養経管栄養法指導管理を受けている状態',
+  '在宅自己導尿指導管理を受けている状態',
+  '在宅人工呼吸指導管理を受けている状態',
+  '在宅持続陽圧呼吸療法指導管理を受けている状態（CPAP含む）',
+  '在宅自己疼痛管理または在宅肺高血圧症患者指導管理を受けている状態',
+  '在宅植込み型補助人工心臓（非拍動流型）指導管理を受けている状態',
+  '人工肛門または人工膀胱を設置している状態',
+  '真皮を超える褥瘡の状態',
+  '在宅患者訪問点滴注射管理指導料を算定している状態',
+]
+
 const steps = [
   { num: 1, title: 'お問い合わせ・ご相談', desc: 'まずはお電話またはお問い合わせフォームよりご相談ください。入居に関する疑問・不安にお答えします。' },
   { num: 2, title: '見学・面談', desc: '実際に施設をご覧いただき、スタッフと詳しくお話しします。ご家族様のご参加も歓迎しております。' },
@@ -47,7 +67,7 @@ export default function ResidenceApplicationPage() {
 
               <div className="bg-white border border-lightgray p-6 md:p-8 mb-6 space-y-4">
                 {[
-                  '終末期の方、「別表7の疾患（厚生労働大臣の定める疾病等）」、「別表8の状態」厚生労働大臣が認める疾患（※別表7）の方',
+                  '終末期の方、別表第7（厚生労働大臣が定める疾病等）に該当する疾患をお持ちの方、別表第8（厚生労働大臣が定める状態等）に該当する状態の方',
                   '気管カニューレを挿入している方や、褥瘡処置などで自宅より手厚い医療や看護介護の支援を必要としている方もご入居可能です。',
                   '食事や外出、面会などの希望から施設ケアではなく在宅ケアを希望している方もご入居可能です。',
                 ].map((text, i) => (
@@ -58,10 +78,10 @@ export default function ResidenceApplicationPage() {
                 ))}
               </div>
 
-              {/* Disease table */}
+              {/* 別表7 */}
               <div className="bg-white border border-lightgray p-6 md:p-8">
                 <h3 className="font-serif text-base font-semibold text-green-deeper mb-1 text-center">
-                  厚生労働大臣が認める疾患（※別表7）
+                  厚生労働大臣が定める疾病等（別表第7）
                 </h3>
                 <div className="w-8 h-0.5 bg-green-main mx-auto mb-6" />
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -74,8 +94,27 @@ export default function ResidenceApplicationPage() {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* 別表8 */}
+              <div className="bg-white border border-lightgray p-6 md:p-8">
+                <h3 className="font-serif text-base font-semibold text-green-deeper mb-1 text-center">
+                  厚生労働大臣が定める状態等（別表第8）
+                </h3>
+                <div className="w-8 h-0.5 bg-green-main mx-auto mb-6" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {conditions8.map((c) => (
+                    <div
+                      key={c}
+                      className="bg-offwhite border border-lightgray font-sans text-xs text-darkgray px-4 py-2.5 tracking-wide flex items-center gap-2"
+                    >
+                      <span className="w-1.5 h-1.5 bg-green-main flex-shrink-0" />
+                      {c}
+                    </div>
+                  ))}
+                </div>
                 <p className="font-sans text-xs text-midgray mt-5 text-center tracking-wide">
-                  ※上記の状況以外の方でも受入が可能な場合がございます。お気軽にご相談ください。
+                  ※上記以外の状態の方でも受入が可能な場合がございます。お気軽にご相談ください。
                 </p>
               </div>
             </section>

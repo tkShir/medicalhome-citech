@@ -16,9 +16,11 @@ export async function POST(request: Request) {
     const { error } = await supabase.from('contact_submissions').insert([{
       last_name: body.lastName,
       first_name: body.firstName,
+      contact_person: body.contactPerson || null,
+      phone: body.phone || null,
       email: body.email,
-      job_title: body.jobTitle || null,
       company: body.company || null,
+      inquiry_types: body.inquiryTypes || null,
       message: body.message,
       agreed_to_privacy_policy: body.agreedToPrivacyPolicy,
     }])
@@ -35,9 +37,11 @@ export async function POST(request: Request) {
         {
           firstName: body.firstName,
           lastName: body.lastName,
+          contactPerson: body.contactPerson,
+          phone: body.phone,
           email: body.email,
           company: body.company,
-          jobTitle: body.jobTitle,
+          inquiryTypes: body.inquiryTypes,
           message: body.message,
         },
         toEmails
