@@ -71,7 +71,7 @@ export default function SaiyoPage() {
                 <div className="divider-green" />
                 <div className="space-y-4 font-sans text-sm text-darkgray leading-[1.9]">
                   <p>
-                    シーズメディカルホームは、関わる人全ての「らしさ」を尊重し、それが人生の実となるように支える住まいです。
+                    シーズメディカルホームは、東京・神奈川を中心に関東エリアで展開する医療特化型介護施設です。関わる人全ての「らしさ」を尊重し、それが人生の実となるように支える住まいを目指しています。
                   </p>
                   <p>
                     あなたの経験と頑張りが大地となり、樹を育て、人生の「らしさ」という実りを生み出す。その過程で、あなた「らしさ」を見つけられる場所になることが、シーズメディカルホームの願いです。
@@ -127,7 +127,10 @@ export default function SaiyoPage() {
                 </div>
               ))}
             </div>
-            <div className="mt-8 text-center">
+            <p className="mt-6 font-sans text-xs text-midgray text-center tracking-wide">
+              現在の募集エリア：横浜市保土ヶ谷区・藤沢市・川崎市・日野市（今後も順次拡大予定）
+            </p>
+            <div className="mt-4 text-center">
               <Link href="/recruit" className="btn-primary">
                 求人一覧・応募フォームはこちら
               </Link>
