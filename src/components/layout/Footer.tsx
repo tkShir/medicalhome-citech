@@ -7,6 +7,7 @@ const footerLinks = {
     { label: 'トップ', href: '/' },
     { label: '施設一覧', href: '/shisetsu-ichiran' },
     { label: 'ご入居希望の方へ', href: '/residence-application' },
+    { label: '医療機関の方へ', href: '/renkei' },
     { label: 'お知らせ', href: '/news' },
   ],
   sub: [
