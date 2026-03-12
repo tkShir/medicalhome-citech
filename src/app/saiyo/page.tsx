@@ -4,7 +4,7 @@ import Footer from '@/components/layout/Footer'
 
 export const metadata = {
   title: '採用情報',
-  description: 'シーズメディカルホームの採用情報。看護師・介護職員・PT/OT・相談員を募集中。神奈川県（横浜・藤沢・川崎）のホスピス型住宅での勤務。医療・介護の専門性を活かせる職場環境です。',
+  description: 'シーズメディカルホームの採用情報。看護師・介護職員・PT/OT・相談員を募集中。神奈川県（横浜・藤沢・川崎）の医療特化型介護施設での勤務。医療・介護の専門性を活かせる職場環境です。',
 }
 
 const values = [
@@ -149,7 +149,7 @@ export default function SaiyoPage() {
               <div className="w-8 h-0.5 bg-green-main mb-5" />
               <p className="font-sans text-sm text-darkgray leading-[1.9] mb-5">
                 訪問診療医の指示のもと24時間体制で状態を管理し、モニタリングや疼痛コントロールなどの医療的ケアを行います。
-                ホスピス住宅には訪問看護ステーションと訪問介護ステーションを併設しており、日々の暮らしの中での会話を大切にしながら、生活面や必要援助について相談しながら看護を提供します。
+                医療特化型介護施設には訪問看護ステーションと訪問介護ステーションを併設しており、日々の暮らしの中での会話を大切にしながら、生活面や必要援助について相談しながら看護を提供します。
               </p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {nurseTasks.map((task) => (

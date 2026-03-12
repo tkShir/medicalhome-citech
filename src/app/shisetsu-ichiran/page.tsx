@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: '施設一覧',
-  description: 'シーズメディカルホームの施設一覧。横浜（保土ヶ谷）・藤沢・川崎エリアにホスピス型住宅を展開。24時間看護体制と訪問診療連携で、終末期・医療依存度の高い方の入居をサポートします。',
+  description: 'シーズメディカルホームの施設一覧。横浜（保土ヶ谷）・藤沢・川崎エリアに医療特化型介護施設を展開。24時間看護体制と訪問診療連携で、終末期・医療依存度の高い方の入居をサポートします。',
 }
 
 interface FacilityImage {
