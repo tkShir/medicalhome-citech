@@ -139,7 +139,7 @@ export default function RenkeiPage() {
                     { label: '訪問診療', value: '複数クリニックと連携' },
                     { label: '訪問看護', value: '施設内訪問看護ステーション併設' },
                     { label: '訪問介護', value: '施設内訪問介護ステーション併設' },
-                    { label: '面会時間', value: '24時間対応（家としてのコンセプト）' },
+                    { label: '面会時間', value: '24時間対応（夜間については事前相談をお願いしております）' },
                     { label: 'エリア', value: '横浜市・藤沢市・川崎市（神奈川県）\n日野市（東京都）' },
                     { label: '受付時間', value: '平日 10:00 – 19:00' },
                   ].map((item) => (
