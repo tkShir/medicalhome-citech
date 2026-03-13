@@ -91,7 +91,7 @@ export default function Header() {
           <div className="flex items-center gap-2 md:hidden">
             <Link
               href="/saiyo"
-              className={`font-sans text-[10px] font-medium tracking-wider px-2 py-1.5 border transition-colors ${
+              className={`font-sans text-[10px] font-medium tracking-wider whitespace-nowrap px-2 py-1.5 border transition-colors ${
                 pathname === '/saiyo' || pathname === '/recruit'
                   ? 'text-green-dark border-green-dark bg-green-light'
                   : 'text-midgray border-lightgray hover:text-green-dark hover:border-green-dark'
@@ -102,7 +102,7 @@ export default function Header() {
             </Link>
             <a
               href="tel:03-3797-4002"
-              className="font-sans text-sm font-semibold text-white bg-green-dark px-4 py-2 tracking-wider hover:bg-green-deeper transition-colors"
+              className="font-sans text-[10px] font-semibold text-white bg-green-dark whitespace-nowrap px-2 py-1.5 tracking-wider hover:bg-green-deeper transition-colors"
               aria-label="電話相談"
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onClick={() => (window as any).dataLayer?.push({ event: 'phone_click' })}
