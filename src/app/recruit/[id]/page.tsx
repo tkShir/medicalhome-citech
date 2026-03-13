@@ -26,16 +26,17 @@ async function getJob(id: string): Promise<JobListing | null> {
   }
 }
 
-async function getFacilityAddress(facilityName: string): Promise<string | null> {
+async function getFacilityAddress(facilityName: string): Promise<{ web_address: string | null; postal_code: string | null } | null> {
   if (!hasValidSupabaseConfig()) return null
   try {
     const supabase = createServerSupabaseClient()
     const { data } = await supabase
       .from('facilities')
-      .select('web_address')
+      .select('web_address, postal_code')
       .eq('name', facilityName)
       .single()
-    return data?.web_address ?? null
+    if (!data) return null
+    return { web_address: data.web_address ?? null, postal_code: data.postal_code ?? null }
   } catch {
     return null
   }
@@ -81,7 +82,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 
 const BASE_URL = 'https://medicalhome.citech.co.jp'
 
-function buildJobPostingJsonLd(job: JobListing, facilityAddress: string | null) {
+function buildJobPostingJsonLd(job: JobListing, facilityAddress: { web_address: string | null; postal_code: string | null } | null) {
   const description = [
     job.appeal_content,
     job.job_description,
@@ -98,8 +99,11 @@ function buildJobPostingJsonLd(job: JobListing, facilityAddress: string | null) 
     '派遣社員': 'TEMPORARY',
   }
 
-  const addressParts = facilityAddress
-    ? parseJpAddress(facilityAddress)
+  const addressParts = facilityAddress?.web_address
+    ? {
+        ...parseJpAddress(facilityAddress.web_address),
+        ...(facilityAddress.postal_code && { postalCode: facilityAddress.postal_code }),
+      }
     : { addressRegion: '神奈川県・東京都' }
 
   // validThrough: updated_at から6ヶ月後
