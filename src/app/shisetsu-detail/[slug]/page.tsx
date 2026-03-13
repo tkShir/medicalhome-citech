@@ -71,10 +71,61 @@ const getFacility = cache(async (slug: string): Promise<FacilityRow | null> => {
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const facility = await getFacility(params.slug)
   if (!facility || facility.status === 'not_published') return { title: '施設が見つかりません' }
+  const description = facility.description
+    ?? `${facility.name}｜24時間看護体制・看取り対応・訪問診療連携の医療特化型介護施設。${facility.web_address ? facility.web_address + '。' : ''}終末期・難病・医療依存度の高い方の入居相談受付中。`
   return {
     title: facility.name,
-    description: facility.description ?? facility.name,
+    description,
+    openGraph: {
+      type: 'website',
+      url: `https://medicalhome.citech.co.jp/shisetsu-detail/${params.slug}`,
+      locale: 'ja_JP',
+      siteName: 'シーズメディカルホーム',
+      title: `${facility.name} | シーズメディカルホーム`,
+      description,
+    },
   }
+}
+
+const BASE_URL = 'https://medicalhome.citech.co.jp'
+
+function buildFacilityJsonLd(facility: FacilityRow) {
+  const pageUrl = `${BASE_URL}/shisetsu-detail/${facility.slug}`
+  return [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'LodgingBusiness',
+      name: facility.name,
+      description: facility.description ?? facility.name,
+      url: pageUrl,
+      ...(facility.web_address && {
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: facility.web_address,
+          addressCountry: 'JP',
+        },
+      }),
+      telephone: '+81-3-3797-4002',
+      openingHours: 'Mo-Fr 10:00-19:00',
+      ...(facility.facility_images.length > 0 && {
+        image: facility.facility_images[0].url,
+      }),
+      parentOrganization: {
+        '@type': 'Organization',
+        name: 'シーズメディカルホーム',
+        url: BASE_URL,
+      },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'ホーム', item: BASE_URL },
+        { '@type': 'ListItem', position: 2, name: '施設一覧', item: `${BASE_URL}/shisetsu-ichiran` },
+        { '@type': 'ListItem', position: 3, name: facility.name, item: pageUrl },
+      ],
+    },
+  ]
 }
 
 export default async function FacilityDetailPage({ params }: { params: { slug: string } }) {
@@ -90,10 +141,19 @@ export default async function FacilityDetailPage({ params }: { params: { slug: s
   const hasLinks = facility.google_maps_url || facility.job_medley_url || facility.minnano_kaigo_url || facility.recruit_url
   const hasDisclosure = facility.disclosure_offices?.length || facility.disclosure_note
 
+  const jsonLd = buildFacilityJsonLd(facility)
+
   return (
     <>
       <Header />
       <main>
+        {jsonLd.map((schema, i) => (
+          <script
+            key={i}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          />
+        ))}
 
         {/* Page header */}
         <div className="page-header">

@@ -5,6 +5,14 @@ import ContactForm from '@/components/forms/ContactForm'
 export const metadata = {
   title: 'お問い合わせ',
   description: 'シーズメディカルホームへのお問い合わせはこちらから。入居相談・見学予約・各種ご質問を受け付けております。',
+  openGraph: {
+    type: 'website',
+    url: 'https://medicalhome.citech.co.jp/contact',
+    locale: 'ja_JP',
+    siteName: 'シーズメディカルホーム',
+    title: 'お問い合わせ | シーズメディカルホーム',
+    description: 'シーズメディカルホームへのお問い合わせはこちらから。入居相談・見学予約・各種ご質問を受け付けております。平日10:00〜19:00対応。',
+  },
 }
 
 export default function ContactPage() {

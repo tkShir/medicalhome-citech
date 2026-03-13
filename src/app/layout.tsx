@@ -17,15 +17,28 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     type: 'website',
+    url: 'https://medicalhome.citech.co.jp',
     locale: 'ja_JP',
     siteName: 'シーズメディカルホーム',
     title: '【公式】シーズメディカルホーム｜関東の医療特化型介護施設',
     description: '終末期・難病・医療依存度の高い方の住まいをお探しなら。24時間看護・看取り対応・訪問診療連携。横浜市保土ヶ谷区・藤沢市・川崎市・日野市に展開する医療特化型介護施設。',
+    images: [
+      {
+        url: 'https://cagtyscyplrhkhkzbeay.supabase.co/storage/v1/object/public/web_asset/cizmedihome_ogimage.png',
+        width: 1200,
+        height: 630,
+        alt: 'シーズメディカルホーム',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: '【公式】シーズメディカルホーム｜関東の医療特化型介護施設',
     description: '終末期・難病・医療依存度の高い方の入居相談受付中。24時間看護・看取り対応。横浜市保土ヶ谷区・藤沢市・川崎市・日野市に展開する医療特化型介護施設。',
+  },
+  icons: {
+    icon: 'https://cagtyscyplrhkhkzbeay.supabase.co/storage/v1/object/public/web_asset/cizmedihome_favicon.png',
+    apple: 'https://cagtyscyplrhkhkzbeay.supabase.co/storage/v1/object/public/web_asset/cizmedihome_favicon.png',
   },
 }
 

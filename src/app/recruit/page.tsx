@@ -8,6 +8,14 @@ import type { JobListing } from '@/types'
 export const metadata = {
   title: '求人一覧・採用応募',
   description: 'シーズメディカルホームの求人一覧。看護師・介護職・PT/OT職員を募集中。施設・職種・雇用形態で絞り込みができます。各求人の詳細・応募フォームはこちらから。',
+  openGraph: {
+    type: 'website',
+    url: 'https://medicalhome.citech.co.jp/recruit',
+    locale: 'ja_JP',
+    siteName: 'シーズメディカルホーム',
+    title: '求人一覧・採用応募 | シーズメディカルホーム',
+    description: '看護師・介護職・PT/OT職員を募集中。東京・神奈川を中心に関東エリアで展開する医療特化型介護施設。残業少なめ・看取り対応・子育て中も活躍中。求人一覧・応募フォームはこちら。',
+  },
 }
 
 export const revalidate = 60 // ISR: 60秒ごとに再検証

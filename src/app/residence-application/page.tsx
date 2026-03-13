@@ -4,7 +4,15 @@ import Footer from '@/components/layout/Footer'
 
 export const metadata = {
   title: 'ご入居希望の方へ',
-  description: 'シーズメディカルホームへの入居をご検討の方へ。入居対象、ご入居までの流れをご説明します。',
+  description: 'シーズメディカルホームへの入居をご検討の方へ。対象疾患・入居の流れ・費用の目安をわかりやすくご説明します。終末期・難病・医療依存度の高い方の見学・入居相談随時受付中。',
+  openGraph: {
+    type: 'website',
+    url: 'https://medicalhome.citech.co.jp/residence-application',
+    locale: 'ja_JP',
+    siteName: 'シーズメディカルホーム',
+    title: 'ご入居希望の方へ | シーズメディカルホーム',
+    description: '終末期・難病・医療依存度の高い方の入居をご検討の方へ。対象疾患・入居の流れ・費用の目安をわかりやすくご説明します。見学・入居相談随時受付中（平日10:00〜19:00）。',
+  },
 }
 
 const diseases = [

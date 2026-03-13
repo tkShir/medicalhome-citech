@@ -5,7 +5,15 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 export const metadata = {
   title: 'お知らせ',
-  description: 'シーズメディカルホームからのお知らせ・ニュースリリース。',
+  description: 'シーズメディカルホームからのお知らせ・ニュースリリース。施設オープン情報・サービス更新・地域連携に関する最新情報を発信します。',
+  openGraph: {
+    type: 'website',
+    url: 'https://medicalhome.citech.co.jp/news',
+    locale: 'ja_JP',
+    siteName: 'シーズメディカルホーム',
+    title: 'お知らせ | シーズメディカルホーム',
+    description: 'シーズメディカルホームからのお知らせ・ニュースリリース。施設オープン情報・サービス更新・地域連携に関する最新情報を発信します。',
+  },
 }
 
 async function getPosts() {

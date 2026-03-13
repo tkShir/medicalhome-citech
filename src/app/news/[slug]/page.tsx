@@ -25,12 +25,23 @@ async function getPost(slug: string) {
   }
 }
 
+const BASE_URL = 'https://medicalhome.citech.co.jp'
+
 export async function generateMetadata({ params }: Props) {
   const post = await getPost(params.slug)
   if (!post) return { title: 'お知らせ' }
+  const description = post.excerpt || `${post.title}｜シーズメディカルホームからのお知らせ。`
   return {
     title: post.title,
-    description: post.excerpt || undefined,
+    description,
+    openGraph: {
+      type: 'article',
+      url: `${BASE_URL}/news/${params.slug}`,
+      locale: 'ja_JP',
+      siteName: 'シーズメディカルホーム',
+      title: `${post.title} | シーズメディカルホーム`,
+      description,
+    },
   }
 }
 

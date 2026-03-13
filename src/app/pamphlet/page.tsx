@@ -4,7 +4,15 @@ import Footer from '@/components/layout/Footer'
 
 export const metadata = {
   title: 'パンフレット',
-  description: 'シーズメディカルホームのパンフレット。',
+  description: 'シーズメディカルホームのパンフレット・資料をご確認いただけます。施設概要・サービス内容・費用について詳しくご説明しています。',
+  openGraph: {
+    type: 'website',
+    url: 'https://medicalhome.citech.co.jp/pamphlet',
+    locale: 'ja_JP',
+    siteName: 'シーズメディカルホーム',
+    title: 'パンフレット | シーズメディカルホーム',
+    description: 'シーズメディカルホームのパンフレット・資料をご確認いただけます。施設概要・サービス内容・費用について詳しくご説明しています。',
+  },
 }
 
 export default function PamphletPage() {
