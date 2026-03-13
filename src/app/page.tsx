@@ -5,7 +5,7 @@ import Footer from '@/components/layout/Footer'
 
 export const metadata: Metadata = {
   title: {
-    absolute: '【公式】シーズメディカルホーム｜関東の医療特化型介護施設',
+    absolute: '【公式】シーズメディカルホーム｜東京都・神奈川県を主に展開する医療特化型介護施設',
   },
   description: '終末期・難病・医療依存度の高い方の住まいをお探しなら。24時間看護体制・看取り対応・訪問診療連携。横浜市保土ヶ谷区・藤沢市・川崎市・日野市に展開する医療特化型介護施設。入居相談受付中。',
 }
