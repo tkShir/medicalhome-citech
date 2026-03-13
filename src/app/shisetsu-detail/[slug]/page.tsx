@@ -71,9 +71,19 @@ const getFacility = cache(async (slug: string): Promise<FacilityRow | null> => {
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const facility = await getFacility(params.slug)
   if (!facility || facility.status === 'not_published') return { title: '施設が見つかりません' }
+  const description = facility.description
+    ?? `${facility.name}｜24時間看護体制・看取り対応・訪問診療連携の医療特化型介護施設。${facility.web_address ? facility.web_address + '。' : ''}終末期・難病・医療依存度の高い方の入居相談受付中。`
   return {
     title: facility.name,
-    description: facility.description ?? facility.name,
+    description,
+    openGraph: {
+      type: 'website',
+      url: `https://medicalhome.citech.co.jp/shisetsu-detail/${params.slug}`,
+      locale: 'ja_JP',
+      siteName: 'シーズメディカルホーム',
+      title: `${facility.name} | シーズメディカルホーム`,
+      description,
+    },
   }
 }
 

@@ -5,6 +5,14 @@ import Footer from '@/components/layout/Footer'
 export const metadata = {
   title: '採用情報',
   description: '正看護師・介護職員（初任者研修以上）募集。施設内訪問看護・看取りケアに携わりたい方歓迎。残業少なめ・夜勤負担軽減で子育て中の方も活躍中。横浜市保土ヶ谷区・藤沢市・川崎市・日野市の医療特化型介護施設。',
+  openGraph: {
+    type: 'website',
+    url: 'https://medicalhome.citech.co.jp/saiyo',
+    locale: 'ja_JP',
+    siteName: 'シーズメディカルホーム',
+    title: '採用情報 | シーズメディカルホーム',
+    description: '正看護師・介護職員（初任者研修以上）募集。東京・神奈川を中心に関東エリアで展開する医療特化型介護施設。施設内訪問看護・看取りケア。残業少なめ・夜勤負担軽減・子育て中も活躍中。横浜市保土ヶ谷区・藤沢市・川崎市・日野市。',
+  },
 }
 
 const values = [

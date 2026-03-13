@@ -32,9 +32,19 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   const desc = `${job.facility}の${job.job_type}（${job.employment_type}）求人。` +
     `看取り対応・施設内訪問看護・24時間看護体制の医療特化型介護施設。` +
     (job.appeal_content ? job.appeal_content.slice(0, 60) : '詳細・応募はこちら。')
+  const description = desc.slice(0, 120)
+  const title = `${job.job_type}（${job.employment_type}）| ${job.facility}`
   return {
-    title: `${job.job_type}（${job.employment_type}）| ${job.facility}`,
-    description: desc.slice(0, 120),
+    title,
+    description,
+    openGraph: {
+      type: 'website',
+      url: `https://medicalhome.citech.co.jp/recruit/${params.id}`,
+      locale: 'ja_JP',
+      siteName: 'シーズメディカルホーム',
+      title: `${title} | シーズメディカルホーム`,
+      description,
+    },
   }
 }
 

@@ -8,6 +8,14 @@ export const dynamic = 'force-dynamic'
 export const metadata = {
   title: '施設一覧',
   description: 'シーズメディカルホームの施設一覧。横浜市保土ヶ谷区・藤沢市・川崎市・日野市に医療特化型介護施設を展開。24時間看護体制と訪問診療連携で、終末期・医療依存度の高い方の入居をサポートします。',
+  openGraph: {
+    type: 'website',
+    url: 'https://medicalhome.citech.co.jp/shisetsu-ichiran',
+    locale: 'ja_JP',
+    siteName: 'シーズメディカルホーム',
+    title: '施設一覧 | シーズメディカルホーム',
+    description: '横浜市保土ヶ谷区・藤沢市・川崎市・日野市に展開する医療特化型介護施設の一覧。24時間看護体制・看取り対応・訪問診療連携。終末期・難病・医療依存度の高い方の入居受付中。',
+  },
 }
 
 interface FacilityImage {
