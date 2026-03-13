@@ -77,6 +77,47 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
+const BASE_URL = 'https://medicalhome.citech.co.jp'
+
+function buildFacilityJsonLd(facility: FacilityRow) {
+  const pageUrl = `${BASE_URL}/shisetsu-detail/${facility.slug}`
+  return [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'LodgingBusiness',
+      name: facility.name,
+      description: facility.description ?? facility.name,
+      url: pageUrl,
+      ...(facility.web_address && {
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: facility.web_address,
+          addressCountry: 'JP',
+        },
+      }),
+      telephone: '+81-3-3797-4002',
+      openingHours: 'Mo-Fr 10:00-19:00',
+      ...(facility.facility_images.length > 0 && {
+        image: facility.facility_images[0].url,
+      }),
+      parentOrganization: {
+        '@type': 'Organization',
+        name: 'シーズメディカルホーム',
+        url: BASE_URL,
+      },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'ホーム', item: BASE_URL },
+        { '@type': 'ListItem', position: 2, name: '施設一覧', item: `${BASE_URL}/shisetsu-ichiran` },
+        { '@type': 'ListItem', position: 3, name: facility.name, item: pageUrl },
+      ],
+    },
+  ]
+}
+
 export default async function FacilityDetailPage({ params }: { params: { slug: string } }) {
   const facility = await getFacility(params.slug)
 
@@ -90,10 +131,19 @@ export default async function FacilityDetailPage({ params }: { params: { slug: s
   const hasLinks = facility.google_maps_url || facility.job_medley_url || facility.minnano_kaigo_url || facility.recruit_url
   const hasDisclosure = facility.disclosure_offices?.length || facility.disclosure_note
 
+  const jsonLd = buildFacilityJsonLd(facility)
+
   return (
     <>
       <Header />
       <main>
+        {jsonLd.map((schema, i) => (
+          <script
+            key={i}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          />
+        ))}
 
         {/* Page header */}
         <div className="page-header">

@@ -38,6 +38,66 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   }
 }
 
+const BASE_URL = 'https://medicalhome.citech.co.jp'
+
+function buildJobPostingJsonLd(job: JobListing) {
+  const description = [
+    job.appeal_content,
+    job.job_description,
+    `必要資格：${job.required_qualifications ?? '詳細はお問い合わせください'}`,
+    `勤務時間：${job.working_hours ?? '詳細はお問い合わせください'}`,
+    `休日：${job.holidays ?? '詳細はお問い合わせください'}`,
+  ].filter(Boolean).join('\n')
+
+  const employmentTypeMap: Record<string, string> = {
+    '正社員': 'FULL_TIME',
+    'パートタイム': 'PART_TIME',
+    'アルバイト': 'PART_TIME',
+    '契約社員': 'CONTRACTOR',
+    '派遣社員': 'TEMPORARY',
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'JobPosting',
+    title: job.title,
+    description,
+    datePosted: job.created_at.slice(0, 10),
+    employmentType: employmentTypeMap[job.employment_type] ?? 'OTHER',
+    hiringOrganization: {
+      '@type': 'Organization',
+      name: 'シーズメディカルホーム',
+      sameAs: BASE_URL,
+    },
+    jobLocation: {
+      '@type': 'Place',
+      address: {
+        '@type': 'PostalAddress',
+        addressRegion: '神奈川県・東京都',
+        addressCountry: 'JP',
+      },
+    },
+    ...(job.total_salary_min || job.total_salary_max ? {
+      baseSalary: {
+        '@type': 'MonetaryAmount',
+        currency: 'JPY',
+        value: {
+          '@type': 'QuantitativeValue',
+          ...(job.total_salary_min && { minValue: job.total_salary_min }),
+          ...(job.total_salary_max && { maxValue: job.total_salary_max }),
+          unitText: 'MONTH',
+        },
+      },
+    } : {}),
+    identifier: {
+      '@type': 'PropertyValue',
+      name: 'シーズメディカルホーム',
+      value: job.id,
+    },
+    url: `${BASE_URL}/recruit/${job.id}`,
+  }
+}
+
 function formatSalary(min: number | null, max: number | null): string {
   if (!min && !max) return '—'
   if (min && max) return `¥${min.toLocaleString()} – ¥${max.toLocaleString()}`
@@ -73,10 +133,17 @@ export default async function JobDetailPage({ params }: { params: { id: string }
     notFound()
   }
 
+  const jobPostingJsonLd = buildJobPostingJsonLd(job)
+
   return (
     <>
       <Header />
       <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingJsonLd) }}
+        />
+
         {/* Page header */}
         <div className="page-header">
           <div className="max-w-7xl mx-auto px-6">

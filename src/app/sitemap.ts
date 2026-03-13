@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 import { createServerSupabaseClient, hasValidSupabaseConfig } from '@/lib/supabase-server'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://seeds-medicalhome.jp'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://medicalhome.citech.co.jp'
 
 // 静的ページ
 const staticRoutes: MetadataRoute.Sitemap = [

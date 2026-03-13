@@ -10,6 +10,31 @@ export const metadata: Metadata = {
   description: '終末期・難病・医療依存度の高い方の住まいをお探しなら。24時間看護体制・看取り対応・訪問診療連携。横浜市保土ヶ谷区・藤沢市・川崎市・日野市に展開する医療特化型介護施設。入居相談受付中。',
 }
 
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'シーズメディカルホーム',
+  url: 'https://medicalhome.citech.co.jp',
+  logo: 'https://cagtyscyplrhkhkzbeay.supabase.co/storage/v1/object/public/web_asset/cizmedihome_ogimage.png',
+  description: '東京・神奈川を中心に関東エリアで展開する医療特化型介護施設。終末期・難病・医療依存度の高い方の24時間看護・看取り対応。横浜市保土ヶ谷区・藤沢市・川崎市・日野市に展開。',
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: '+81-3-3797-4002',
+    contactType: 'customer service',
+    availableLanguage: 'Japanese',
+    hoursAvailable: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '10:00',
+      closes: '19:00',
+    },
+  },
+  areaServed: {
+    '@type': 'AdministrativeArea',
+    name: '東京・神奈川を中心とした関東エリア',
+  },
+}
+
 export default function HomePage() {
   return (
     <>
@@ -307,6 +332,10 @@ export default function HomePage() {
           </div>
         </section>
 
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
       </main>
       <Footer />
     </>
