@@ -27,6 +27,10 @@ export const metadata: Metadata = {
     title: '【公式】シーズメディカルホーム｜関東の医療特化型介護施設',
     description: '終末期・難病・医療依存度の高い方の入居相談受付中。24時間看護・看取り対応。横浜市保土ヶ谷区・藤沢市・川崎市・日野市に展開する医療特化型介護施設。',
   },
+  icons: {
+    icon: 'https://cagtyscyplrhkhkzbeay.supabase.co/storage/v1/object/public/web_asset/Mark_Green.png',
+    apple: 'https://cagtyscyplrhkhkzbeay.supabase.co/storage/v1/object/public/web_asset/Mark_Green.png',
+  },
 }
 
 export default function RootLayout({
