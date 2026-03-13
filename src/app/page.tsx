@@ -205,7 +205,7 @@ export default function HomePage() {
                     )}
                     {f.status === 'open' && (
                       <p className="font-sans text-xs text-green-dark bg-green-light px-2 py-1 inline-block">
-                        営業中
+                        オープン
                       </p>
                     )}
                   </div>
