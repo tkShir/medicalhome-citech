@@ -53,15 +53,37 @@ export default async function RecruitPage() {
       <main>
 
         {/* Page header */}
-        <div className="page-header">
-          <div className="max-w-7xl mx-auto px-6">
+        <div className="page-header relative overflow-hidden">
+          {/* Cloud wave decoration */}
+          <svg className="absolute bottom-0 left-0 w-full opacity-[0.08] pointer-events-none" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,20 C240,60 480,0 720,30 C960,60 1200,10 1440,30 L1440,60 L0,60 Z" fill="white" />
+          </svg>
+          <div className="relative max-w-7xl mx-auto px-6">
             <span className="page-header-en">Job Listings</span>
             <h1 className="page-header-title">求人一覧</h1>
           </div>
         </div>
 
-        <section className="py-12 md:py-20 bg-offwhite">
-          <div className="max-w-5xl mx-auto px-6">
+        <section className="relative py-12 md:py-20 bg-offwhite overflow-hidden">
+          {/* Dot pattern overlay */}
+          <div className="absolute inset-0 bg-dot-pattern pointer-events-none opacity-[0.45]" />
+          {/* Leaf decoration right */}
+          <svg className="absolute top-16 right-6 w-24 opacity-[0.06] pointer-events-none hidden lg:block" viewBox="0 0 100 140" aria-hidden="true">
+            <path d="M50,8 C75,8 92,35 92,70 C92,105 75,132 50,132 C25,132 8,105 8,70 C8,35 25,8 50,8 Z" fill="#578E1D"/>
+            <line x1="50" y1="8" x2="50" y2="132" stroke="#578E1D" strokeWidth="2"/>
+            <line x1="50" y1="50" x2="78" y2="38" stroke="#578E1D" strokeWidth="1.5"/>
+            <line x1="50" y1="70" x2="82" y2="65" stroke="#578E1D" strokeWidth="1.5"/>
+            <line x1="50" y1="90" x2="78" y2="88" stroke="#578E1D" strokeWidth="1.5"/>
+          </svg>
+          {/* Leaf decoration left */}
+          <svg className="absolute bottom-16 left-6 w-20 opacity-[0.05] pointer-events-none hidden lg:block" viewBox="0 0 100 140" aria-hidden="true">
+            <path d="M50,8 C75,8 92,35 92,70 C92,105 75,132 50,132 C25,132 8,105 8,70 C8,35 25,8 50,8 Z" fill="#578E1D"/>
+            <line x1="50" y1="8" x2="50" y2="132" stroke="#578E1D" strokeWidth="2"/>
+            <line x1="50" y1="50" x2="22" y2="38" stroke="#578E1D" strokeWidth="1.5"/>
+            <line x1="50" y1="70" x2="18" y2="65" stroke="#578E1D" strokeWidth="1.5"/>
+            <line x1="50" y1="90" x2="22" y2="88" stroke="#578E1D" strokeWidth="1.5"/>
+          </svg>
+          <div className="relative max-w-5xl mx-auto px-6">
 
             {/* Job cards with filter */}
             <div className="mb-12">

@@ -16,6 +16,10 @@ function formatSalary(min: number | null, max: number | null): string {
   return '応相談'
 }
 
+function isNew(createdAt: string): boolean {
+  return Date.now() - new Date(createdAt).getTime() < 30 * 24 * 60 * 60 * 1000
+}
+
 export default function RecruitJobsClient({ jobs }: Props) {
   const [facilityFilter, setFacilityFilter] = useState('')
   const [jobTypeFilter, setJobTypeFilter] = useState('')
@@ -159,16 +163,24 @@ export default function RecruitJobsClient({ jobs }: Props) {
             <Link
               key={job.id}
               href={`/recruit/${job.id}`}
-              className="group block bg-white border border-lightgray p-6 md:p-8 hover:border-green-main hover:shadow-sm transition-all"
+              className="group block bg-white border border-lightgray border-l-4 border-l-green-main/40 p-6 md:p-8
+                         hover:border-green-main hover:border-l-green-dark hover:shadow-lg hover:-translate-y-1
+                         hover:bg-gradient-to-br hover:from-white hover:to-green-light/20
+                         transition-all duration-200 cursor-pointer"
             >
               {/* Tag row */}
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 mb-4 flex-wrap">
                 <span className="font-sans text-[10px] tracking-widest text-green-dark bg-green-light px-2 py-0.5">
                   {job.job_type}
                 </span>
                 <span className="font-sans text-[10px] tracking-widest text-darkgray bg-offwhite border border-lightgray px-2 py-0.5">
                   {job.employment_type}
                 </span>
+                {isNew(job.created_at) && (
+                  <span className="font-sans text-[10px] tracking-widest text-white bg-pink-main px-2 py-0.5">
+                    NEW
+                  </span>
+                )}
               </div>
               <h2 className="font-serif text-base font-semibold text-green-deeper leading-snug mb-3 group-hover:text-green-dark transition-colors">
                 {job.title}
@@ -180,7 +192,7 @@ export default function RecruitJobsClient({ jobs }: Props) {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-sans text-xs text-midgray w-16 flex-shrink-0">給与</span>
-                  <span className="font-sans text-xs text-darkgray font-medium">
+                  <span className="font-sans text-sm font-semibold text-green-dark">
                     {formatSalary(job.total_salary_min, job.total_salary_max)}
                   </span>
                 </div>
@@ -190,11 +202,16 @@ export default function RecruitJobsClient({ jobs }: Props) {
                   {job.appeal_content}
                 </p>
               )}
-              <div className="mt-4 flex items-center gap-1 text-green-dark">
-                <span className="font-sans text-xs">詳細を見る</span>
-                <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+              {/* CTA button */}
+              <div className="mt-5 pt-4 border-t border-lightgray flex items-center justify-between">
+                <span className="font-sans text-xs font-medium text-green-dark tracking-wider group-hover:text-green-deeper transition-colors">
+                  詳細を見る・応募する
+                </span>
+                <div className="w-7 h-7 bg-green-dark flex items-center justify-center group-hover:bg-green-deeper transition-colors flex-shrink-0">
+                  <svg className="w-3 h-3 text-white group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
               </div>
             </Link>
           ))}

@@ -109,6 +109,16 @@ export default async function HomePage() {
           {/* Subtle texture overlay */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(147,218,73,0.15),_transparent_60%)]" />
 
+          {/* Cloud decorations */}
+          <svg className="absolute bottom-0 left-0 w-full opacity-[0.06] pointer-events-none" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,80 C120,40 240,100 360,70 C480,40 600,90 720,60 C840,30 960,80 1080,55 C1200,30 1320,70 1440,50 L1440,120 L0,120 Z" fill="white" />
+          </svg>
+          <svg className="absolute top-6 right-0 w-72 opacity-[0.05] pointer-events-none hidden lg:block" viewBox="0 0 200 100" aria-hidden="true">
+            <ellipse cx="100" cy="60" rx="80" ry="40" fill="white"/>
+            <ellipse cx="60" cy="55" rx="50" ry="35" fill="white"/>
+            <ellipse cx="145" cy="58" rx="45" ry="30" fill="white"/>
+          </svg>
+
           <div className="relative max-w-7xl mx-auto px-6 py-28 md:py-40">
             <div className="max-w-2xl">
               <span className="font-sans text-xs tracking-widest text-green-pale uppercase mb-6 block">
@@ -139,8 +149,18 @@ export default async function HomePage() {
         </section>
 
         {/* ── 3つのらしさ ── */}
-        <section className="py-20 md:py-28 bg-offwhite">
-          <div className="max-w-7xl mx-auto px-6">
+        <section className="relative py-20 md:py-28 bg-offwhite overflow-hidden">
+          {/* Dot pattern overlay */}
+          <div className="absolute inset-0 bg-dot-pattern pointer-events-none opacity-[0.45]" />
+          {/* Leaf decoration */}
+          <svg className="absolute top-12 right-8 w-32 opacity-[0.06] pointer-events-none hidden md:block" viewBox="0 0 120 160" aria-hidden="true">
+            <path d="M60,10 C90,10 110,40 110,80 C110,120 90,150 60,150 C30,150 10,120 10,80 C10,40 30,10 60,10 Z" fill="#578E1D"/>
+            <line x1="60" y1="10" x2="60" y2="150" stroke="#578E1D" strokeWidth="2"/>
+            <line x1="60" y1="60" x2="90" y2="45" stroke="#578E1D" strokeWidth="1.5"/>
+            <line x1="60" y1="80" x2="95" y2="75" stroke="#578E1D" strokeWidth="1.5"/>
+            <line x1="60" y1="100" x2="90" y2="100" stroke="#578E1D" strokeWidth="1.5"/>
+          </svg>
+          <div className="relative max-w-7xl mx-auto px-6">
 
             <div className="mb-14">
               <span className="section-heading-en">Our Mission</span>
@@ -296,8 +316,16 @@ export default async function HomePage() {
         </section>
 
         {/* ── 代表挨拶 ── */}
-        <section className="py-20 md:py-28 bg-offwhite">
-          <div className="max-w-4xl mx-auto px-6">
+        <section className="relative py-20 md:py-28 bg-offwhite overflow-hidden">
+          {/* Dot pattern overlay */}
+          <div className="absolute inset-0 bg-dot-pattern pointer-events-none opacity-[0.45]" />
+          {/* Cloud decoration */}
+          <svg className="absolute bottom-0 right-0 w-64 opacity-[0.06] pointer-events-none hidden md:block" viewBox="0 0 200 120" aria-hidden="true">
+            <ellipse cx="100" cy="90" rx="85" ry="50" fill="#578E1D"/>
+            <ellipse cx="55" cy="80" rx="55" ry="40" fill="#578E1D"/>
+            <ellipse cx="150" cy="85" rx="50" ry="38" fill="#578E1D"/>
+          </svg>
+          <div className="relative max-w-4xl mx-auto px-6">
             <div className="mb-10">
               <span className="section-heading-en">Message</span>
               <h2 className="section-heading">代表挨拶</h2>
@@ -369,7 +397,11 @@ export default async function HomePage() {
         </section>
 
         {/* ── お問い合わせCTA ── */}
-        <section className="py-16 bg-green-deeper text-white">
+        <section className="relative py-16 bg-green-deeper text-white overflow-hidden">
+          {/* Cloud wave decoration */}
+          <svg className="absolute top-0 left-0 w-full opacity-[0.07] pointer-events-none" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 C1300,45 1370,20 1440,30 L1440,0 L0,0 Z" fill="white" />
+          </svg>
           <div className="max-w-4xl mx-auto px-6 text-center">
             <p className="font-sans text-xs tracking-widest text-green-pale uppercase mb-4">Contact</p>
             <h2 className="font-serif text-2xl md:text-3xl font-normal tracking-wide mb-3">

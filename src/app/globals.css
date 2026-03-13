@@ -156,6 +156,12 @@
     @apply max-w-full h-auto;
   }
 
+  /* ── 背景装飾 ── */
+  .bg-dot-pattern {
+    background-image: radial-gradient(circle, rgba(87,142,29,0.35) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
   /* ── フォーム ── */
   .form-label {
     @apply block text-sm font-sans font-medium text-darkgray mb-1.5 tracking-wide;
