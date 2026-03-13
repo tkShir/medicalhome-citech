@@ -60,16 +60,35 @@ export default function SaiyoPage() {
       <main>
 
         {/* Page header */}
-        <div className="page-header">
-          <div className="max-w-7xl mx-auto px-6">
+        <div className="page-header relative overflow-hidden">
+          {/* Wave decoration */}
+          <svg className="absolute bottom-0 left-0 w-full opacity-[0.08] pointer-events-none" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,20 C240,60 480,0 720,30 C960,60 1200,10 1440,30 L1440,60 L0,60 Z" fill="white" />
+          </svg>
+          {/* Floating circles */}
+          <svg className="absolute right-16 top-1/2 -translate-y-1/2 w-32 opacity-[0.06] pointer-events-none hidden lg:block" viewBox="0 0 120 120" aria-hidden="true">
+            <circle cx="60" cy="60" r="56" fill="none" stroke="white" strokeWidth="1.5"/>
+            <circle cx="60" cy="60" r="35" fill="none" stroke="white" strokeWidth="1"/>
+          </svg>
+          <div className="relative max-w-7xl mx-auto px-6">
             <span className="page-header-en">Recruitment</span>
             <h1 className="page-header-title">採用情報</h1>
           </div>
         </div>
 
         {/* Hero message */}
-        <section className="py-16 md:py-24 bg-offwhite">
-          <div className="max-w-5xl mx-auto px-6">
+        <section className="relative py-16 md:py-24 bg-offwhite overflow-hidden">
+          {/* Dot pattern */}
+          <div className="absolute inset-0 bg-dot-pattern pointer-events-none opacity-[0.45]" />
+          {/* Leaf decoration bottom-left */}
+          <svg className="absolute bottom-0 left-0 w-36 opacity-[0.06] pointer-events-none hidden md:block" viewBox="0 0 120 160" aria-hidden="true">
+            <path d="M60,10 C90,10 110,40 110,80 C110,120 90,150 60,150 C30,150 10,120 10,80 C10,40 30,10 60,10 Z" fill="#578E1D"/>
+            <line x1="60" y1="10" x2="60" y2="150" stroke="#578E1D" strokeWidth="2"/>
+            <line x1="60" y1="50" x2="28" y2="38" stroke="#578E1D" strokeWidth="1.5"/>
+            <line x1="60" y1="70" x2="22" y2="65" stroke="#578E1D" strokeWidth="1.5"/>
+            <line x1="60" y1="90" x2="28" y2="90" stroke="#578E1D" strokeWidth="1.5"/>
+          </svg>
+          <div className="relative max-w-5xl mx-auto px-6">
             <div className="grid md:grid-cols-2 gap-10 items-start">
               <div>
                 <span className="section-heading-en">Our Philosophy</span>
@@ -88,6 +107,11 @@ export default function SaiyoPage() {
                   <p>
                     私たちは、入居者様とご家族様の「実り」を支える一番大切な存在は、現場で向き合う職員だと考えています。介護職・看護職・リハビリ職・相談員・事務スタッフ…それぞれの専門性とチームワークが、大地となり、樹木に栄養を届けます。
                   </p>
+                </div>
+                <div className="mt-8">
+                  <Link href="/recruit" className="btn-primary">
+                    求人一覧・応募フォームはこちら
+                  </Link>
                 </div>
               </div>
 
@@ -118,22 +142,40 @@ export default function SaiyoPage() {
         </section>
 
         {/* Job categories */}
-        <section className="py-16 md:py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-6">
+        <section className="relative py-16 md:py-20 bg-white overflow-hidden">
+          {/* Dot pattern (subtle on white) */}
+          <div className="absolute inset-0 bg-dot-pattern pointer-events-none opacity-[0.22]" />
+          {/* Leaf top-right */}
+          <svg className="absolute top-8 right-6 w-24 opacity-[0.04] pointer-events-none hidden lg:block" viewBox="0 0 100 140" aria-hidden="true">
+            <path d="M50,8 C75,8 92,35 92,70 C92,105 75,132 50,132 C25,132 8,105 8,70 C8,35 25,8 50,8 Z" fill="#578E1D"/>
+            <line x1="50" y1="8" x2="50" y2="132" stroke="#578E1D" strokeWidth="2"/>
+            <line x1="50" y1="50" x2="78" y2="38" stroke="#578E1D" strokeWidth="1.5"/>
+            <line x1="50" y1="70" x2="82" y2="65" stroke="#578E1D" strokeWidth="1.5"/>
+            <line x1="50" y1="90" x2="78" y2="88" stroke="#578E1D" strokeWidth="1.5"/>
+          </svg>
+          <div className="relative max-w-7xl mx-auto px-6">
             <div className="mb-10 text-center">
               <span className="section-heading-en">Job Categories</span>
               <h2 className="section-heading-center">募集職種</h2>
               <div className="divider-green-center" />
+              <p className="font-sans text-xs text-midgray tracking-wide">各職種カードをクリックして求人詳細をご確認ください</p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-0 border border-lightgray">
               {jobCategories.map((job, i) => (
-                <div
+                <Link
                   key={job.title}
-                  className={`p-6 md:p-8 bg-white ${i < jobCategories.length - 1 ? 'border-b lg:border-b-0 lg:border-r border-lightgray' : ''}`}
+                  href="/recruit"
+                  className={`group p-6 md:p-8 bg-white hover:bg-green-light/40 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 cursor-pointer ${i < jobCategories.length - 1 ? 'border-b lg:border-b-0 lg:border-r border-lightgray' : ''}`}
                 >
-                  <h3 className="font-serif text-base font-semibold text-green-deeper mb-3">{job.title}</h3>
+                  <h3 className="font-serif text-base font-semibold text-green-deeper mb-3 group-hover:text-green-dark transition-colors">{job.title}</h3>
                   <p className="font-sans text-xs text-darkgray/80 leading-relaxed">{job.desc}</p>
-                </div>
+                  <div className="mt-3 flex items-center gap-1 text-green-dark opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="font-sans text-xs font-medium">求人を見る</span>
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </Link>
               ))}
             </div>
             <p className="mt-6 font-sans text-xs text-midgray text-center tracking-wide">
@@ -148,8 +190,16 @@ export default function SaiyoPage() {
         </section>
 
         {/* Nurse's day */}
-        <section className="py-16 md:py-20 bg-offwhite">
-          <div className="max-w-4xl mx-auto px-6">
+        <section className="relative py-16 md:py-20 bg-offwhite overflow-hidden">
+          {/* Dot pattern */}
+          <div className="absolute inset-0 bg-dot-pattern pointer-events-none opacity-[0.45]" />
+          {/* Cloud bottom-right */}
+          <svg className="absolute bottom-0 right-0 w-56 opacity-[0.05] pointer-events-none hidden md:block" viewBox="0 0 200 120" aria-hidden="true">
+            <ellipse cx="100" cy="90" rx="85" ry="50" fill="#578E1D"/>
+            <ellipse cx="55" cy="80" rx="55" ry="40" fill="#578E1D"/>
+            <ellipse cx="150" cy="85" rx="50" ry="38" fill="#578E1D"/>
+          </svg>
+          <div className="relative max-w-4xl mx-auto px-6">
             <span className="section-heading-en">A Day in the Life</span>
             <h2 className="section-heading">あなた「らしく」働く</h2>
             <p className="font-sans text-sm text-midgray mb-2 tracking-wide">看護師の1日</p>
@@ -192,8 +242,18 @@ export default function SaiyoPage() {
         </section>
 
         {/* 施設内訪問看護という働き方 */}
-        <section className="py-16 md:py-20 bg-white">
-          <div className="max-w-4xl mx-auto px-6">
+        <section className="relative py-16 md:py-20 bg-white overflow-hidden">
+          {/* Dot pattern (subtle on white) */}
+          <div className="absolute inset-0 bg-dot-pattern pointer-events-none opacity-[0.20]" />
+          {/* Leaf top-left */}
+          <svg className="absolute top-10 left-6 w-20 opacity-[0.04] pointer-events-none hidden lg:block" viewBox="0 0 100 140" aria-hidden="true">
+            <path d="M50,8 C75,8 92,35 92,70 C92,105 75,132 50,132 C25,132 8,105 8,70 C8,35 25,8 50,8 Z" fill="#578E1D"/>
+            <line x1="50" y1="8" x2="50" y2="132" stroke="#578E1D" strokeWidth="2"/>
+            <line x1="50" y1="50" x2="22" y2="38" stroke="#578E1D" strokeWidth="1.5"/>
+            <line x1="50" y1="70" x2="18" y2="65" stroke="#578E1D" strokeWidth="1.5"/>
+            <line x1="50" y1="90" x2="22" y2="88" stroke="#578E1D" strokeWidth="1.5"/>
+          </svg>
+          <div className="relative max-w-4xl mx-auto px-6">
             <span className="section-heading-en">Nursing Style</span>
             <h2 className="section-heading">施設内訪問看護という働き方</h2>
             <div className="divider-green" />
@@ -220,9 +280,35 @@ export default function SaiyoPage() {
           </div>
         </section>
 
+        {/* ── インライン求人CTAバナー ── */}
+        <div className="bg-green-light border-y border-green-pale">
+          <div className="max-w-4xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <p className="font-serif text-base text-green-deeper leading-snug">
+                現在、看護師・介護職員を<span className="text-pink-main font-semibold">積極募集中</span>
+              </p>
+              <p className="font-sans text-xs text-darkgray/70 mt-1">詳しい求人情報・勤務条件・応募はこちらから</p>
+            </div>
+            <Link href="/recruit" className="btn-primary flex-shrink-0">
+              求人一覧を見る
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+
         {/* チームで支える看取りケア */}
-        <section className="py-16 md:py-20 bg-offwhite">
-          <div className="max-w-4xl mx-auto px-6">
+        <section className="relative py-16 md:py-20 bg-offwhite overflow-hidden">
+          {/* Dot pattern */}
+          <div className="absolute inset-0 bg-dot-pattern pointer-events-none opacity-[0.45]" />
+          {/* Cloud top-right */}
+          <svg className="absolute top-8 right-0 w-52 opacity-[0.06] pointer-events-none hidden md:block" viewBox="0 0 200 100" aria-hidden="true">
+            <ellipse cx="100" cy="60" rx="80" ry="40" fill="#578E1D"/>
+            <ellipse cx="60" cy="55" rx="50" ry="35" fill="#578E1D"/>
+            <ellipse cx="145" cy="58" rx="45" ry="30" fill="#578E1D"/>
+          </svg>
+          <div className="relative max-w-4xl mx-auto px-6">
             <span className="section-heading-en">End-of-Life Care</span>
             <h2 className="section-heading">チームで支える看取りケア</h2>
             <div className="divider-green" />
@@ -263,18 +349,50 @@ export default function SaiyoPage() {
         </section>
 
         {/* Apply CTA */}
-        <section className="py-16 bg-green-deeper text-white">
-          <div className="max-w-2xl mx-auto px-6 text-center">
+        <section className="relative py-16 md:py-20 bg-green-deeper text-white overflow-hidden">
+          {/* Wave top */}
+          <svg className="absolute top-0 left-0 w-full opacity-[0.08] pointer-events-none" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 C1300,45 1370,20 1440,30 L1440,0 L0,0 Z" fill="white" />
+          </svg>
+          {/* Dot pattern */}
+          <div className="absolute inset-0 bg-dot-pattern pointer-events-none opacity-[0.18]" />
+          {/* Floating circles */}
+          <svg className="absolute left-8 top-1/2 -translate-y-1/2 w-36 opacity-[0.05] pointer-events-none hidden lg:block" viewBox="0 0 120 120" aria-hidden="true">
+            <circle cx="60" cy="60" r="56" fill="none" stroke="white" strokeWidth="1.5"/>
+            <circle cx="60" cy="60" r="36" fill="none" stroke="white" strokeWidth="1"/>
+          </svg>
+          <svg className="absolute right-10 bottom-8 w-24 opacity-[0.04] pointer-events-none hidden lg:block" viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="46" fill="white"/>
+          </svg>
+          {/* Wave bottom */}
+          <svg className="absolute bottom-0 left-0 w-full opacity-[0.06] pointer-events-none" viewBox="0 0 1440 40" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,20 C360,40 720,0 1080,20 C1260,30 1380,10 1440,20 L1440,40 L0,40 Z" fill="white"/>
+          </svg>
+          <div className="relative max-w-2xl mx-auto px-6 text-center">
             <p className="font-sans text-xs tracking-widest text-green-pale uppercase mb-4">Join Us</p>
             <h2 className="font-serif text-2xl md:text-3xl font-normal tracking-wide mb-4">
               一緒に働きませんか？
             </h2>
-            <p className="font-sans text-sm text-white/70 mb-8 leading-[1.9] tracking-wide">
+            <p className="font-sans text-sm text-white/70 mb-6 leading-[1.9] tracking-wide">
               経験・資格・勤務形態のご希望など、<br />まずはお気軽にお問い合わせください。
             </p>
-            <Link href="/recruit" className="btn-white">
-              求人一覧・応募フォーム
-            </Link>
+            {/* Phone */}
+            <a
+              href="tel:03-3797-4002"
+              className="font-sans text-xl md:text-2xl font-semibold tracking-wider hover:text-green-pale transition-colors block mb-2"
+            >
+              ☎&ensp;03-3797-4002
+            </a>
+            <p className="font-sans text-xs text-white/50 mb-8 tracking-wide">採用担当 / 平日 10:00 – 19:00</p>
+            {/* CTA buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href="/recruit" className="btn-white">
+                求人一覧・応募フォーム
+              </Link>
+              <Link href="/contact" className="btn-white-outline">
+                お問い合わせ
+              </Link>
+            </div>
           </div>
         </section>
 

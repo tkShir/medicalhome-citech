@@ -118,6 +118,16 @@ export default async function HomePage() {
             <ellipse cx="60" cy="55" rx="50" ry="35" fill="white"/>
             <ellipse cx="145" cy="58" rx="45" ry="30" fill="white"/>
           </svg>
+          {/* Floating circles */}
+          <svg className="absolute left-1/3 top-12 w-56 opacity-[0.04] pointer-events-none hidden lg:block" viewBox="0 0 200 160" aria-hidden="true">
+            <circle cx="40" cy="40" r="38" fill="white"/>
+            <circle cx="150" cy="65" r="26" fill="white"/>
+            <circle cx="85" cy="125" r="20" fill="white"/>
+          </svg>
+          <svg className="absolute right-1/4 bottom-12 w-32 opacity-[0.05] pointer-events-none hidden xl:block" viewBox="0 0 120 120" aria-hidden="true">
+            <circle cx="60" cy="60" r="55" fill="none" stroke="white" strokeWidth="1.5"/>
+            <circle cx="60" cy="60" r="35" fill="none" stroke="white" strokeWidth="1"/>
+          </svg>
 
           <div className="relative max-w-7xl mx-auto px-6 py-28 md:py-40">
             <div className="max-w-2xl">
@@ -398,11 +408,25 @@ export default async function HomePage() {
 
         {/* ── お問い合わせCTA ── */}
         <section className="relative py-16 bg-green-deeper text-white overflow-hidden">
-          {/* Cloud wave decoration */}
+          {/* Cloud wave top */}
           <svg className="absolute top-0 left-0 w-full opacity-[0.07] pointer-events-none" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
             <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 C1300,45 1370,20 1440,30 L1440,0 L0,0 Z" fill="white" />
           </svg>
-          <div className="max-w-4xl mx-auto px-6 text-center">
+          {/* Dot pattern */}
+          <div className="absolute inset-0 bg-dot-pattern pointer-events-none opacity-[0.18]" />
+          {/* Floating circles */}
+          <svg className="absolute left-8 top-1/2 -translate-y-1/2 w-40 opacity-[0.05] pointer-events-none hidden lg:block" viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="65" fill="none" stroke="white" strokeWidth="1.5"/>
+            <circle cx="70" cy="70" r="42" fill="none" stroke="white" strokeWidth="1"/>
+          </svg>
+          <svg className="absolute right-12 bottom-6 w-28 opacity-[0.04] pointer-events-none hidden lg:block" viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="46" fill="white"/>
+          </svg>
+          {/* Wave bottom */}
+          <svg className="absolute bottom-0 left-0 w-full opacity-[0.06] pointer-events-none" viewBox="0 0 1440 40" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,20 C360,40 720,0 1080,20 C1260,30 1380,10 1440,20 L1440,40 L0,40 Z" fill="white"/>
+          </svg>
+          <div className="relative max-w-4xl mx-auto px-6 text-center">
             <p className="font-sans text-xs tracking-widest text-green-pale uppercase mb-4">Contact</p>
             <h2 className="font-serif text-2xl md:text-3xl font-normal tracking-wide mb-3">
               入居・見学のご相談はお気軽に
