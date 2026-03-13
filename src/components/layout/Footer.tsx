@@ -7,6 +7,7 @@ const footerLinks = {
     { label: 'トップ', href: '/' },
     { label: '施設一覧', href: '/shisetsu-ichiran' },
     { label: 'ご入居希望の方へ', href: '/residence-application' },
+    { label: '医療機関の方へ', href: '/renkei' },
     { label: 'お知らせ', href: '/news' },
   ],
   sub: [
@@ -32,7 +33,7 @@ export default function Footer() {
             <p className="font-sans text-xs text-green-pale leading-relaxed">
               医療と介護の力を結集し、<br />
               その人「らしさ」を実現する<br />
-              ホスピス住宅です。
+              医療特化型介護施設です。
             </p>
             {/* Instagram */}
             <a

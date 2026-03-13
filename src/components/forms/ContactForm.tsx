@@ -2,6 +2,13 @@
 
 import { useState } from 'react'
 
+const inquiryOptions = [
+  { name: 'inquiryType_nyukyo', label: '利用者様の入居相談' },
+  { name: 'inquiryType_kengaku', label: '施設見学' },
+  { name: 'inquiryType_ryokin', label: '料金の確認' },
+  { name: 'inquiryType_other', label: 'その他' },
+]
+
 export default function ContactForm() {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -13,12 +20,19 @@ export default function ContactForm() {
     setError('')
 
     const formData = new FormData(e.currentTarget)
+    const inquiryTypes = inquiryOptions
+      .filter((opt) => formData.get(opt.name) === 'on')
+      .map((opt) => opt.label)
+      .join('、')
+
     const data = {
       lastName: formData.get('lastName') as string,
       firstName: formData.get('firstName') as string,
+      contactPerson: formData.get('contactPerson') as string,
+      phone: formData.get('phone') as string,
       email: formData.get('email') as string,
-      jobTitle: formData.get('jobTitle') as string,
       company: formData.get('company') as string,
+      inquiryTypes,
       message: formData.get('message') as string,
       agreedToPrivacyPolicy: formData.get('agreedToPrivacyPolicy') === 'on',
     }
@@ -62,6 +76,24 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+
+      {/* Inquiry type */}
+      <div>
+        <label className="form-label">お問い合わせの種類</label>
+        <div className="grid grid-cols-2 gap-2 mt-1">
+          {inquiryOptions.map((opt) => (
+            <label key={opt.name} className="flex items-center gap-2 cursor-pointer">
+              <input
+                name={opt.name}
+                type="checkbox"
+                className="accent-green-dark w-4 h-4 flex-shrink-0"
+              />
+              <span className="font-sans text-sm text-darkgray">{opt.label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
       {/* Name row */}
       <div className="grid grid-cols-2 gap-4">
         <div>
@@ -80,14 +112,37 @@ export default function ContactForm() {
 
       <div>
         <label className="form-label">
-          メールアドレス <span className="text-pink-main">*</span>
+          担当者名 <span className="text-pink-main">*</span>
         </label>
-        <input name="email" type="email" required className="form-input" placeholder="example@email.com" />
+        <p className="font-sans text-xs text-midgray mb-1 tracking-wide">
+          ご家族・医療機関スタッフなど、ご対応いただく方のお名前をご記入ください
+        </p>
+        <input
+          name="contactPerson"
+          required
+          className="form-input"
+          placeholder="鈴木 花子（担当者のお名前）"
+        />
       </div>
 
       <div>
-        <label className="form-label">職種</label>
-        <input name="jobTitle" className="form-input" placeholder="看護師、介護職員、など" />
+        <label className="form-label">
+          電話番号 <span className="text-pink-main">*</span>
+        </label>
+        <input
+          name="phone"
+          type="tel"
+          required
+          className="form-input"
+          placeholder="03-0000-0000"
+        />
+      </div>
+
+      <div>
+        <label className="form-label">
+          メールアドレス <span className="text-pink-main">*</span>
+        </label>
+        <input name="email" type="email" required className="form-input" placeholder="example@email.com" />
       </div>
 
       <div>

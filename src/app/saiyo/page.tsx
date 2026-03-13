@@ -4,7 +4,7 @@ import Footer from '@/components/layout/Footer'
 
 export const metadata = {
   title: '採用情報',
-  description: 'シーズメディカルホームの採用情報。看護師・介護職員・PT/OT・相談員を募集中。神奈川県（横浜・藤沢・川崎）のホスピス型住宅での勤務。医療・介護の専門性を活かせる職場環境です。',
+  description: '正看護師・介護職員（初任者研修以上）募集。施設内訪問看護・看取りケアに携わりたい方歓迎。残業少なめ・夜勤負担軽減で子育て中の方も活躍中。横浜市保土ヶ谷区・藤沢市・川崎市・日野市の医療特化型介護施設。',
 }
 
 const values = [
@@ -14,8 +14,8 @@ const values = [
 ]
 
 const jobCategories = [
-  { title: '看護師', desc: '24時間体制の医療ケアを担う看護師を募集。訪問看護の経験者歓迎。' },
-  { title: '介護職員', desc: '利用者さまの日々の生活を支援する介護スタッフを募集。経験不問。' },
+  { title: '看護師（正看護師）', desc: '施設内訪問看護を担う正看護師を募集。看取りケア・終末期経験者歓迎。夜勤負担軽減・残業少なめ。' },
+  { title: '介護職員', desc: '初任者研修以上の資格をお持ちの方を募集。看取り経験のある方は尚可。看護師と連携し、その人らしい生活を支えます。' },
   { title: 'PT/OT職員', desc: 'リハビリ専門職として、理想のケアを実現しませんか。' },
   { title: '相談員・事務', desc: '入居相談・事務スタッフも積極採用中です。' },
 ]
@@ -71,7 +71,7 @@ export default function SaiyoPage() {
                 <div className="divider-green" />
                 <div className="space-y-4 font-sans text-sm text-darkgray leading-[1.9]">
                   <p>
-                    シーズメディカルホームは、関わる人全ての「らしさ」を尊重し、それが人生の実となるように支える住まいです。
+                    シーズメディカルホームは、東京・神奈川を中心に関東エリアで展開する医療特化型介護施設です。関わる人全ての「らしさ」を尊重し、それが人生の実となるように支える住まいを目指しています。
                   </p>
                   <p>
                     あなたの経験と頑張りが大地となり、樹を育て、人生の「らしさ」という実りを生み出す。その過程で、あなた「らしさ」を見つけられる場所になることが、シーズメディカルホームの願いです。
@@ -127,7 +127,10 @@ export default function SaiyoPage() {
                 </div>
               ))}
             </div>
-            <div className="mt-8 text-center">
+            <p className="mt-6 font-sans text-xs text-midgray text-center tracking-wide">
+              現在の募集エリア：横浜市保土ヶ谷区・藤沢市・川崎市・日野市（今後も順次拡大予定）
+            </p>
+            <div className="mt-4 text-center">
               <Link href="/recruit" className="btn-primary">
                 求人一覧・応募フォームはこちら
               </Link>
@@ -149,7 +152,7 @@ export default function SaiyoPage() {
               <div className="w-8 h-0.5 bg-green-main mb-5" />
               <p className="font-sans text-sm text-darkgray leading-[1.9] mb-5">
                 訪問診療医の指示のもと24時間体制で状態を管理し、モニタリングや疼痛コントロールなどの医療的ケアを行います。
-                ホスピス住宅には訪問看護ステーションと訪問介護ステーションを併設しており、日々の暮らしの中での会話を大切にしながら、生活面や必要援助について相談しながら看護を提供します。
+                医療特化型介護施設には訪問看護ステーションと訪問介護ステーションを併設しており、日々の暮らしの中での会話を大切にしながら、生活面や必要援助について相談しながら看護を提供します。
               </p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {nurseTasks.map((task) => (
@@ -174,6 +177,77 @@ export default function SaiyoPage() {
                     <span className="font-sans text-sm text-darkgray">{item.task}</span>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 施設内訪問看護という働き方 */}
+        <section className="py-16 md:py-20 bg-white">
+          <div className="max-w-4xl mx-auto px-6">
+            <span className="section-heading-en">Nursing Style</span>
+            <h2 className="section-heading">施設内訪問看護という働き方</h2>
+            <div className="divider-green" />
+            <div className="space-y-4 font-sans text-sm text-darkgray leading-[1.9] mb-8">
+              <p>
+                シーズメディカルホームでは、併設する訪問看護ステーションの正看護師が施設内の入居者様を担当する「施設内訪問看護」というスタイルで勤務します。病棟看護とは異なり、生活の場である「住まい」に寄り添いながら医療ケアを提供するため、患者さんと深く関わりたい方に適した環境です。
+              </p>
+              <p>
+                訪問診療医との密な連携のもと、状態管理・処置・看取りまでを一貫して担うことができます。「急性期を離れ、その人らしさを支えるケアに携わりたい」「看取りの経験を活かしたい」「残業の少ない環境で子育てと両立したい」という正看護師の方を歓迎します。
+              </p>
+            </div>
+            <div className="grid sm:grid-cols-3 gap-0 border border-lightgray">
+              {[
+                { label: '病棟看護との違い', desc: '処置の回転ではなく、一人ひとりの生活リズムに合わせた丁寧な関わりができます。' },
+                { label: '訪問看護との違い', desc: '施設内なので移動がなく、急変時にも迅速に対応できる安心感があります。' },
+                { label: '看取りへの関わり', desc: '入居者様・ご家族と信頼関係を築きながら、最期まで寄り添えます。' },
+              ].map((item, i) => (
+                <div key={item.label} className={`p-6 bg-white ${i < 2 ? 'border-b sm:border-b-0 sm:border-r border-lightgray' : ''}`}>
+                  <h3 className="font-serif text-sm font-semibold text-green-deeper mb-2">{item.label}</h3>
+                  <p className="font-sans text-xs text-darkgray/80 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* チームで支える看取りケア */}
+        <section className="py-16 md:py-20 bg-offwhite">
+          <div className="max-w-4xl mx-auto px-6">
+            <span className="section-heading-en">End-of-Life Care</span>
+            <h2 className="section-heading">チームで支える看取りケア</h2>
+            <div className="divider-green" />
+            <div className="space-y-4 font-sans text-sm text-darkgray leading-[1.9] mb-8">
+              <p>
+                シーズメディカルホームでは、看護師と介護士が対等なパートナーとして、入居者様の看取りに向き合います。看護師の医療的な視点と、日常生活を長時間ともにしてきた介護士の気づきが合わさることで、ご本人・ご家族が望む「最期のかたち」を一緒に作り上げていきます。
+              </p>
+              <p>
+                介護士だからこそ気づける食事量のわずかな変化、表情のちょっとした違い——それが看護師の的確な判断を支えます。看護師の医療サポートがあるから、介護士が安心してケアを続けられる。どちらの専門性も欠かせない、チーム看取りを大切にしています。
+              </p>
+            </div>
+            <div className="bg-white border border-lightgray p-6 md:p-8">
+              <p className="font-sans text-[10px] tracking-widest text-green-dark uppercase mb-5">Team Approach</p>
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-serif text-sm font-semibold text-green-deeper mb-3">看護師の役割</h3>
+                  <ul className="space-y-2">
+                    {['状態管理・医療処置', '疼痛コントロール', '訪問診療医との連携', '意思決定・看取りの判断支援', 'ご家族へのグリーフケア'].map((t) => (
+                      <li key={t} className="flex items-center gap-2 font-sans text-xs text-darkgray">
+                        <span className="w-1 h-1 bg-green-main flex-shrink-0" />{t}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="font-serif text-sm font-semibold text-green-deeper mb-3">介護士の役割</h3>
+                  <ul className="space-y-2">
+                    {['日常生活の全介助・見守り', '食事・入浴・排泄ケア', '変化への早期気づき・報告', '本人・家族との信頼関係構築', '看護師との密な情報共有'].map((t) => (
+                      <li key={t} className="flex items-center gap-2 font-sans text-xs text-darkgray">
+                        <span className="w-1 h-1 bg-pink-main flex-shrink-0" />{t}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

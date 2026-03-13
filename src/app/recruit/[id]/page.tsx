@@ -29,9 +29,12 @@ async function getJob(id: string): Promise<JobListing | null> {
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const job = await getJob(params.id)
   if (!job) return { title: '求人が見つかりません' }
+  const desc = `${job.facility}の${job.job_type}（${job.employment_type}）求人。` +
+    `看取り対応・施設内訪問看護・24時間看護体制の医療特化型介護施設。` +
+    (job.appeal_content ? job.appeal_content.slice(0, 60) : '詳細・応募はこちら。')
   return {
-    title: `${job.job_type}（${job.employment_type}）– ${job.facility}`,
-    description: job.appeal_content?.slice(0, 120) || `${job.facility}の${job.job_type}求人です。`,
+    title: `${job.job_type}（${job.employment_type}）| ${job.facility}`,
+    description: desc.slice(0, 120),
   }
 }
 
