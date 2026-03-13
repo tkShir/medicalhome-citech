@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: {
@@ -35,7 +38,67 @@ const organizationJsonLd = {
   },
 }
 
-export default function HomePage() {
+interface FacilityImage {
+  url: string
+  sort_order: number
+}
+
+interface Facility {
+  id: string
+  name: string
+  slug: string
+  web_address: string | null
+  status: 'not_published' | 'coming_soon' | 'open'
+  open_date: string | null
+  facility_images: FacilityImage[]
+}
+
+const fallbackFacilities: Facility[] = [
+  {
+    id: '1',
+    slug: 'abee-hodogaya',
+    name: 'ナーシングホームAbee保土ヶ谷',
+    web_address: '神奈川県横浜市保土ヶ谷区',
+    status: 'open',
+    open_date: null,
+    facility_images: [],
+  },
+  {
+    id: '2',
+    slug: 'ciz-fujisawahonmachi',
+    name: 'シーズメディカルホーム藤沢本町',
+    web_address: '神奈川県藤沢市',
+    status: 'coming_soon',
+    open_date: '2026年6月オープン予定',
+    facility_images: [],
+  },
+  {
+    id: '3',
+    slug: 'ciz-kawasakishiratori',
+    name: 'シーズメディカルホーム川崎白鳥',
+    web_address: '神奈川県川崎市麻生区',
+    status: 'coming_soon',
+    open_date: '2026年秋頃オープン予定',
+    facility_images: [],
+  },
+]
+
+export default async function HomePage() {
+  const supabase = createServerSupabaseClient()
+  let facilities: Facility[] = fallbackFacilities
+  try {
+    const { data } = await supabase
+      .from('facilities')
+      .select('id, name, slug, web_address, status, open_date, facility_images(url, sort_order)')
+      .neq('status', 'not_published')
+      .order('created_at')
+    if (data && data.length > 0) {
+      facilities = data as Facility[]
+    }
+  } catch {
+    // DBが利用できない場合はフォールバックデータを使用
+  }
+
   return (
     <>
       <Header />
@@ -153,64 +216,59 @@ export default function HomePage() {
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
-              {[
-                {
-                  slug: 'abee-hodogaya',
-                  name: 'ナーシングホームAbee保土ヶ谷',
-                  address: '神奈川県横浜市保土ヶ谷区',
-                  status: 'open' as const,
-                  openDate: null,
-                },
-                {
-                  slug: 'ciz-fujisawahonmachi',
-                  name: 'シーズメディカルホーム藤沢本町',
-                  address: '神奈川県藤沢市',
-                  status: 'coming_soon' as const,
-                  openDate: '2026年6月オープン予定',
-                },
-                {
-                  slug: 'ciz-kawasakishiratori',
-                  name: 'シーズメディカルホーム川崎白鳥',
-                  address: '神奈川県川崎市麻生区',
-                  status: 'coming_soon' as const,
-                  openDate: '2026年秋頃オープン予定',
-                },
-              ].map((f) => (
-                <Link
-                  key={f.slug}
-                  href={`/shisetsu-detail/${f.slug}`}
-                  className="card group hover:border-green-dark transition-colors duration-200"
-                >
-                  {/* Image placeholder */}
-                  <div className="h-44 bg-green-light flex items-center justify-center relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-green-light to-green-pale/60" />
-                    <span className="relative font-serif text-sm text-green-deeper/60 tracking-wider">
-                      {f.name}
-                    </span>
-                    {f.status === 'coming_soon' && (
-                      <div className="absolute top-3 right-3 bg-white border border-lightgray px-2 py-0.5">
-                        <span className="font-sans text-[10px] tracking-widest text-darkgray uppercase">Coming Soon</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-6">
-                    <h3 className="font-serif text-base font-semibold text-green-deeper mb-1 group-hover:text-green-dark transition-colors leading-snug">
-                      {f.name}
-                    </h3>
-                    <p className="font-sans text-xs text-midgray mb-3 tracking-wide">{f.address}</p>
-                    {f.openDate && (
-                      <p className="font-sans text-xs text-green-dark bg-green-light px-2 py-1 inline-block">
-                        {f.openDate}
-                      </p>
-                    )}
-                    {f.status === 'open' && (
-                      <p className="font-sans text-xs text-green-dark bg-green-light px-2 py-1 inline-block">
-                        営業中
-                      </p>
-                    )}
-                  </div>
-                </Link>
-              ))}
+              {facilities.map((f) => {
+                const firstImage = [...f.facility_images]
+                  .sort((a, b) => a.sort_order - b.sort_order)[0]
+                return (
+                  <Link
+                    key={f.slug}
+                    href={`/shisetsu-detail/${f.slug}`}
+                    className="card group hover:border-green-dark transition-colors duration-200"
+                  >
+                    {/* Image area */}
+                    <div className="h-44 bg-green-light flex items-center justify-center relative overflow-hidden">
+                      {firstImage ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={firstImage.url}
+                          alt={f.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <>
+                          <div className="absolute inset-0 bg-gradient-to-br from-green-light to-green-pale/60" />
+                          <span className="relative font-serif text-sm text-green-deeper/60 tracking-wider">
+                            {f.name}
+                          </span>
+                        </>
+                      )}
+                      {f.status === 'coming_soon' && (
+                        <div className="absolute top-3 right-3 bg-white border border-lightgray px-2 py-0.5">
+                          <span className="font-sans text-[10px] tracking-widest text-darkgray uppercase">Coming Soon</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-6">
+                      <h3 className="font-serif text-base font-semibold text-green-deeper mb-1 group-hover:text-green-dark transition-colors leading-snug">
+                        {f.name}
+                      </h3>
+                      {f.web_address && (
+                        <p className="font-sans text-xs text-midgray mb-3 tracking-wide">{f.web_address}</p>
+                      )}
+                      {f.open_date && (
+                        <p className="font-sans text-xs text-green-dark bg-green-light px-2 py-1 inline-block">
+                          {f.open_date}
+                        </p>
+                      )}
+                      {f.status === 'open' && (
+                        <p className="font-sans text-xs text-green-dark bg-green-light px-2 py-1 inline-block">
+                          営業中
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                )
+              })}
             </div>
           </div>
         </section>
