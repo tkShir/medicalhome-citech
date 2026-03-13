@@ -24,6 +24,7 @@ interface FacilityRow {
   name: string
   slug: string
   web_address: string | null
+  postal_code: string | null
   status: 'not_published' | 'coming_soon' | 'open'
   google_maps_url: string | null
   job_medley_url: string | null
@@ -52,7 +53,7 @@ const getFacility = cache(async (slug: string): Promise<FacilityRow | null> => {
   const { data, error } = await supabase
     .from('facilities')
     .select(`
-      id, name, slug, web_address, status,
+      id, name, slug, web_address, postal_code, status,
       google_maps_url, job_medley_url, minnano_kaigo_url, recruit_url,
       disclosure_offices, disclosure_note,
       description, details, open_date, last_updated,
@@ -102,6 +103,7 @@ function buildFacilityJsonLd(facility: FacilityRow) {
         address: {
           '@type': 'PostalAddress',
           streetAddress: facility.web_address,
+          ...(facility.postal_code && { postalCode: facility.postal_code }),
           addressCountry: 'JP',
         },
       }),

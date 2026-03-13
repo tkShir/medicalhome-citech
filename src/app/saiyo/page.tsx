@@ -23,6 +23,7 @@ const values = [
 
 const jobCategories = [
   { title: '看護師（正看護師）', desc: '施設内訪問看護を担う正看護師を募集。看取りケア・終末期経験者歓迎。夜勤負担軽減・残業少なめ。' },
+  { title: '看護師（パート職員）', desc: '週2〜3日・4時間〜の柔軟な勤務スタイル。家庭やライフスタイルと両立しながら、スキルを活かして働きたい看護師の方を歓迎します。' },
   { title: '介護職員', desc: '初任者研修以上の資格をお持ちの方を募集。看取り経験のある方は尚可。看護師と連携し、その人らしい生活を支えます。' },
   { title: 'PT/OT職員', desc: 'リハビリ専門職として、理想のケアを実現しませんか。' },
   { title: '相談員・事務', desc: '入居相談・事務スタッフも積極採用中です。' },
@@ -124,7 +125,7 @@ export default function SaiyoPage() {
               <h2 className="section-heading-center">募集職種</h2>
               <div className="divider-green-center" />
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-0 border border-lightgray">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-0 border border-lightgray">
               {jobCategories.map((job, i) => (
                 <div
                   key={job.title}

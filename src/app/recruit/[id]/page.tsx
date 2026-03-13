@@ -26,6 +26,38 @@ async function getJob(id: string): Promise<JobListing | null> {
   }
 }
 
+async function getFacilityAddress(facilityName: string): Promise<{ web_address: string | null; postal_code: string | null } | null> {
+  if (!hasValidSupabaseConfig()) return null
+  try {
+    const supabase = createServerSupabaseClient()
+    const { data } = await supabase
+      .from('facilities')
+      .select('web_address, postal_code')
+      .eq('name', facilityName)
+      .single()
+    if (!data) return null
+    return { web_address: data.web_address ?? null, postal_code: data.postal_code ?? null }
+  } catch {
+    return null
+  }
+}
+
+/** 日本語住所文字列から都道府県・市区町村・番地を分解する */
+function parseJpAddress(addr: string) {
+  const clean = addr.trim()
+  const prefMatch = clean.match(/^(東京都|北海道|大阪府|京都府|.{2,4}?[県])/)
+  const addressRegion = prefMatch?.[1]
+  const afterPref = prefMatch ? clean.slice(prefMatch[1].length) : clean
+  // 市区町村 + 政令市の場合はさらに区まで取得（例: 横浜市保土ヶ谷区）
+  const localityMatch = afterPref.match(/^[^0-9０-９]*?[市区町村](?:[^0-9０-９]*?[区])?/)
+  const addressLocality = localityMatch?.[0]
+  return {
+    ...(addressRegion && { addressRegion }),
+    ...(addressLocality && { addressLocality }),
+    streetAddress: clean,
+  }
+}
+
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const job = await getJob(params.id)
   if (!job) return { title: '求人が見つかりません' }
@@ -50,7 +82,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 
 const BASE_URL = 'https://medicalhome.citech.co.jp'
 
-function buildJobPostingJsonLd(job: JobListing) {
+function buildJobPostingJsonLd(job: JobListing, facilityAddress: { web_address: string | null; postal_code: string | null } | null) {
   const description = [
     job.appeal_content,
     job.job_description,
@@ -67,12 +99,24 @@ function buildJobPostingJsonLd(job: JobListing) {
     '派遣社員': 'TEMPORARY',
   }
 
+  const addressParts = facilityAddress?.web_address
+    ? {
+        ...parseJpAddress(facilityAddress.web_address),
+        ...(facilityAddress.postal_code && { postalCode: facilityAddress.postal_code }),
+      }
+    : { addressRegion: '神奈川県・東京都' }
+
+  // validThrough: updated_at から6ヶ月後
+  const validThrough = new Date(job.updated_at)
+  validThrough.setMonth(validThrough.getMonth() + 6)
+
   return {
     '@context': 'https://schema.org',
     '@type': 'JobPosting',
     title: job.title,
     description,
     datePosted: job.created_at.slice(0, 10),
+    validThrough: validThrough.toISOString().slice(0, 10),
     employmentType: employmentTypeMap[job.employment_type] ?? 'OTHER',
     hiringOrganization: {
       '@type': 'Organization',
@@ -83,7 +127,7 @@ function buildJobPostingJsonLd(job: JobListing) {
       '@type': 'Place',
       address: {
         '@type': 'PostalAddress',
-        addressRegion: '神奈川県・東京都',
+        ...addressParts,
         addressCountry: 'JP',
       },
     },
@@ -143,7 +187,8 @@ export default async function JobDetailPage({ params }: { params: { id: string }
     notFound()
   }
 
-  const jobPostingJsonLd = buildJobPostingJsonLd(job)
+  const facilityAddress = await getFacilityAddress(job.facility)
+  const jobPostingJsonLd = buildJobPostingJsonLd(job, facilityAddress)
 
   return (
     <>

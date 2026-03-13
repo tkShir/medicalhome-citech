@@ -91,6 +91,9 @@ export default function ResidenceApplicationPage() {
                 <h3 className="font-serif text-base font-semibold text-green-deeper mb-1 text-center">
                   厚生労働大臣が定める疾病等（別表第7）
                 </h3>
+                <p className="font-sans text-xs text-midgray text-center mb-4 tracking-wide">
+                  難病・神経難病（ALS・パーキンソン病関連疾患・脊髄小脳変性症など）を含む特定疾病に対応しています。
+                </p>
                 <div className="w-8 h-0.5 bg-green-main mx-auto mb-6" />
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {diseases.map((disease) => (
