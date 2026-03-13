@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     type: 'website',
+    url: 'https://medicalhome.citech.co.jp',
     locale: 'ja_JP',
     siteName: 'シーズメディカルホーム',
     title: '【公式】シーズメディカルホーム｜関東の医療特化型介護施設',
