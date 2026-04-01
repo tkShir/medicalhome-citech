@@ -41,10 +41,33 @@ function getServiceRoleKey(): string {
  * API Routes と Server Components で使用
  */
 export function createServerSupabaseClient() {
+  return createServerSupabaseClientWithCache()
+}
+
+type ServerSupabaseCacheOptions =
+  | {
+      cache?: RequestCache
+      revalidate?: never
+    }
+  | {
+      cache?: RequestCache
+      revalidate: number
+    }
+
+export function createServerSupabaseClientWithCache(options?: ServerSupabaseCacheOptions) {
   return createClient(getSupabaseUrl(), getServiceRoleKey(), {
     global: {
-      fetch: (url, options = {}) =>
-        fetch(url, { ...options, cache: 'no-store' }),
+      fetch: (url, fetchOptions = {}) => {
+        if (typeof options?.revalidate === 'number') {
+          const { cache: _cache, ...rest } = fetchOptions
+          return fetch(url, {
+            ...rest,
+            next: { revalidate: options.revalidate },
+          })
+        }
+        const cache = options?.cache ?? 'no-store'
+        return fetch(url, { ...fetchOptions, cache })
+      },
     },
   })
 }
