@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import { createServerSupabaseClient, hasValidSupabaseConfig } from '@/lib/supabase-server'
+import { createServerSupabaseClientWithCache, hasValidSupabaseConfig } from '@/lib/supabase-server'
 import RecruitJobsClient from './_components/RecruitJobsClient'
 import type { JobListing } from '@/types'
 
@@ -25,7 +25,7 @@ async function getJobs(): Promise<JobListing[]> {
   if (!hasValidSupabaseConfig()) return []
 
   try {
-    const supabase = createServerSupabaseClient()
+    const supabase = createServerSupabaseClientWithCache({ revalidate: 60 })
     const { data, error } = await supabase
       .from('job_listings')
       .select('*')
@@ -55,7 +55,7 @@ async function getFilterOptions(): Promise<FilterOptions> {
   if (!hasValidSupabaseConfig()) return { facilities: [], jobTypes: [], employmentTypes: [] }
 
   try {
-    const supabase = createServerSupabaseClient()
+    const supabase = createServerSupabaseClientWithCache({ revalidate: 60 })
     const [facilitiesRes, jobTypesRes, employmentTypesRes] = await Promise.all([
       supabase
         .from('job_listings')
@@ -74,7 +74,7 @@ async function getFilterOptions(): Promise<FilterOptions> {
         .order('employment_type', { ascending: true }),
     ])
 
-    const unique = <T>(arr: T[]): T[] => Array.from(new Set(arr))
+    const unique = <T,>(arr: T[]): T[] => Array.from(new Set(arr))
 
     return {
       facilities: unique((facilitiesRes.data ?? []).map((r) => r.facility).filter(Boolean)),
