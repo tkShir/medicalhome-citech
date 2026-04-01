@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
@@ -44,8 +45,50 @@ async function getJobs(): Promise<JobListing[]> {
   }
 }
 
+interface FilterOptions {
+  facilities: string[]
+  jobTypes: string[]
+  employmentTypes: string[]
+}
+
+async function getFilterOptions(): Promise<FilterOptions> {
+  if (!hasValidSupabaseConfig()) return { facilities: [], jobTypes: [], employmentTypes: [] }
+
+  try {
+    const supabase = createServerSupabaseClient()
+    const [facilitiesRes, jobTypesRes, employmentTypesRes] = await Promise.all([
+      supabase
+        .from('job_listings')
+        .select('facility')
+        .eq('is_active', true)
+        .order('facility', { ascending: true }),
+      supabase
+        .from('job_listings')
+        .select('job_type')
+        .eq('is_active', true)
+        .order('job_type', { ascending: true }),
+      supabase
+        .from('job_listings')
+        .select('employment_type')
+        .eq('is_active', true)
+        .order('employment_type', { ascending: true }),
+    ])
+
+    const unique = <T>(arr: T[]): T[] => Array.from(new Set(arr))
+
+    return {
+      facilities: unique((facilitiesRes.data ?? []).map((r) => r.facility).filter(Boolean)),
+      jobTypes: unique((jobTypesRes.data ?? []).map((r) => r.job_type).filter(Boolean)),
+      employmentTypes: unique((employmentTypesRes.data ?? []).map((r) => r.employment_type).filter(Boolean)),
+    }
+  } catch (err) {
+    console.error('Failed to fetch filter options:', err)
+    return { facilities: [], jobTypes: [], employmentTypes: [] }
+  }
+}
+
 export default async function RecruitPage() {
-  const jobs = await getJobs()
+  const [jobs, filterOptions] = await Promise.all([getJobs(), getFilterOptions()])
 
   return (
     <>
@@ -69,7 +112,9 @@ export default async function RecruitPage() {
               <h2 className="section-heading">募集中の求人</h2>
               <div className="divider-green" />
 
-              <RecruitJobsClient jobs={jobs} />
+              <Suspense fallback={null}>
+                <RecruitJobsClient jobs={jobs} filterOptions={filterOptions} />
+              </Suspense>
             </div>
 
             {/* CTA section */}
