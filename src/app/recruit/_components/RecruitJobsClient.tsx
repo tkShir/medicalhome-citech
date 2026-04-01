@@ -1,11 +1,19 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import type { JobListing } from '@/types'
 
+interface FilterOptions {
+  facilities: string[]
+  jobTypes: string[]
+  employmentTypes: string[]
+}
+
 interface Props {
   jobs: JobListing[]
+  filterOptions: FilterOptions
 }
 
 function formatSalary(min: number | null, max: number | null): string {
@@ -16,24 +24,13 @@ function formatSalary(min: number | null, max: number | null): string {
   return '応相談'
 }
 
-export default function RecruitJobsClient({ jobs }: Props) {
-  const [facilityFilter, setFacilityFilter] = useState('')
-  const [jobTypeFilter, setJobTypeFilter] = useState('')
-  const [employmentFilter, setEmploymentFilter] = useState('')
+export default function RecruitJobsClient({ jobs, filterOptions }: Props) {
+  const searchParams = useSearchParams()
+  const [facilityFilter, setFacilityFilter] = useState(searchParams.get('施設') ?? '')
+  const [jobTypeFilter, setJobTypeFilter] = useState(searchParams.get('職種') ?? '')
+  const [employmentFilter, setEmploymentFilter] = useState(searchParams.get('雇用形態') ?? '')
 
-  // Derive unique filter options from actual job data
-  const facilities = useMemo(
-    () => Array.from(new Set(jobs.map((j) => j.facility).filter(Boolean))).sort(),
-    [jobs]
-  )
-  const jobTypes = useMemo(
-    () => Array.from(new Set(jobs.map((j) => j.job_type).filter(Boolean))).sort(),
-    [jobs]
-  )
-  const employmentTypes = useMemo(
-    () => Array.from(new Set(jobs.map((j) => j.employment_type).filter(Boolean))).sort(),
-    [jobs]
-  )
+  const { facilities, jobTypes, employmentTypes } = filterOptions
 
   const filtered = useMemo(() => {
     return jobs.filter((job) => {

@@ -3,7 +3,8 @@
     "allow": [
       "Bash(node:*)",
       "Bash(npm:*)",
-      "Bash(export PATH=\"$PATH:/usr/local/bin:/opt/homebrew/bin:/opt/homebrew/opt/node/bin\")"
+      "Bash(export PATH=\"$PATH:/usr/local/bin:/opt/homebrew/bin:/opt/homebrew/opt/node/bin\")",
+      "Bash(find /Users/tshirono/dev/medicalhome-citech -type f \\\\\\(-name *.sql -o -name *schema* -o -name *migration* \\\\\\))"
     ]
   }
 }

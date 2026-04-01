@@ -200,6 +200,57 @@ export default function AdminPage() {
             </div>
           </div>
 
+          {/* URL parameter reference */}
+          {!loading && jobs.length > 0 && (() => {
+            const activeJobs = jobs.filter(j => j.is_active)
+            const unique = (arr: string[]) => Array.from(new Set(arr)).filter(Boolean).sort()
+            const facilities = unique(activeJobs.map(j => j.facility))
+            const jobTypes = unique(activeJobs.map(j => j.job_type))
+            const employmentTypes = unique(activeJobs.map(j => j.employment_type))
+            const base = '/recruit'
+            return (
+              <div className="bg-white border border-lightgray p-6 md:p-8">
+                <h2 className="font-serif text-base text-green-deeper mb-1">求人ページ URLパラメーター</h2>
+                <div className="w-6 h-0.5 bg-green-main mb-4" />
+                <p className="font-sans text-xs text-darkgray/70 mb-5 leading-relaxed">
+                  求人一覧ページ（<code className="bg-offwhite px-1 font-mono">/recruit</code>）にURLパラメーターを付けると、フィルタを初期指定した状態でリンクできます。<br />
+                  例：<code className="bg-offwhite px-1 font-mono break-all">{base}?施設=〇〇&amp;職種=△△</code>
+                </p>
+                <div className="grid md:grid-cols-3 gap-6">
+                  {[
+                    { param: '施設', values: facilities },
+                    { param: '職種', values: jobTypes },
+                    { param: '雇用形態', values: employmentTypes },
+                  ].map(({ param, values }) => (
+                    <div key={param}>
+                      <p className="font-sans text-[10px] tracking-widest text-midgray uppercase mb-2">
+                        パラメーター: <span className="font-mono text-green-dark">{param}</span>
+                      </p>
+                      {values.length === 0 ? (
+                        <p className="font-sans text-xs text-midgray/60">（公開中の求人なし）</p>
+                      ) : (
+                        <ul className="space-y-1.5">
+                          {values.map(v => (
+                            <li key={v} className="flex items-start gap-2">
+                              <a
+                                href={`${base}?${encodeURIComponent(param)}=${encodeURIComponent(v)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-mono text-xs text-green-dark hover:underline break-all"
+                              >
+                                {v}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })()}
+
           {/* Job listings table */}
           <div className="bg-white border border-lightgray p-6 md:p-8">
             <div className="flex items-center justify-between mb-1">
